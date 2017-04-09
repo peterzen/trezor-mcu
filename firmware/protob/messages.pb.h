@@ -534,7 +534,7 @@ typedef struct _Features {
     bool has_label;
     char label[33];
     size_t coins_count;
-    CoinType coins[8];
+    CoinType coins[10];
     bool has_initialized;
     bool initialized;
     bool has_revision;
