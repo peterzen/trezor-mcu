@@ -6,8 +6,8 @@ FIRMWARETAG=${1:-master}
 
 docker build -t $IMAGETAG .
 docker run -t -v $(pwd)/output:/output $IMAGETAG /bin/sh -c "\
-	git clone https://github.com/trezor/trezor-mcu && \
-	cd trezor-mcu && \
+	git clone https://github.com/peterzen/trezor-mcu && \
+	cd  decred-changes && \
 	git checkout $FIRMWARETAG && \
 	git submodule update --init && \
 	make -C vendor/libopencm3 && \
