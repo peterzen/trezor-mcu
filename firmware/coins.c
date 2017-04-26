@@ -26,20 +26,34 @@
 // filled CoinType Protobuf structure defined in https://github.com/trezor/trezor-common/blob/master/protob/types.proto#L133
 // address types > 0xFF represent a two-byte prefix in big-endian order
 const CoinType coins[COINS_COUNT] = {
-	{true, "Bitcoin",       true, " BTC",  true,    0, true,     500000, true,    5, true, "\x18" "Bitcoin Signed Message:\n",  true, 0x0488b21e, true, 0x0488ade4, true, false, },
-	{true, "Testnet",       true, " TEST", true,  111, true,   10000000, true,  196, true, "\x18" "Bitcoin Signed Message:\n",  true, 0x043587cf, true, 0x04358394, true, true,  },
-	{true, "Namecoin",      true, " NMC",  true,   52, true,   10000000, true,    5, true, "\x19" "Namecoin Signed Message:\n", true, 0x019da462, true, 0x019d9cfe, true, false, },
-	{true, "Litecoin",      true, " LTC",  true,   48, true,   40000000, true,   50, true, "\x19" "Litecoin Signed Message:\n", true, 0x019da462, true, 0x019d9cfe, true, true,  },
-	{true, "Dogecoin",      true, " DOGE", true,   30, true, 1000000000, true,   22, true, "\x19" "Dogecoin Signed Message:\n", true, 0x02facafd, true, 0x02fac398, true, false, },
-	{true, "Dash",          true, " DASH", true,   76, true,     100000, true,   16, true, "\x19" "DarkCoin Signed Message:\n", true, 0x02fe52cc, true, 0x02fe52f8, true, false, },
-	{true, "Zcash",         true, " ZEC",  true, 7352, true,    1000000, true, 7357, true, "\x16" "Zcash Signed Message:\n",    true, 0x0488b21e, true, 0x0488ade4, true, false, },
-	{true, "Zcash Testnet", true, " TAZ",  true, 7461, true,   10000000, true, 7354, true, "\x16" "Zcash Signed Message:\n",    true, 0x043587cf, true, 0x04358394, true, false, },
+	{true, "Bitcoin",       true, "BTC",  true,    0, true,     300000, true,    5, true,  6, true,  10, true, "\x18" "Bitcoin Signed Message:\n",  true, 0x0488b21e, true, 0x0488ade4, true, false, },
+	{true, "Testnet",       true, "TEST", true,  111, true,   10000000, true,  196, true,  3, true,  40, true, "\x18" "Bitcoin Signed Message:\n",  true, 0x043587cf, true, 0x04358394, true, true,  },
+	{true, "Namecoin",      true, "NMC",  true,   52, true,   10000000, true,    5, false, 0, false,  0, true, "\x19" "Namecoin Signed Message:\n", true, 0x019da462, true, 0x019d9cfe, true, false, },
+	{true, "Litecoin",      true, "LTC",  true,   48, true,    1000000, true,    5, false, 0, false,  0, true, "\x19" "Litecoin Signed Message:\n", true, 0x019da462, true, 0x019d9cfe, true, true,  },
+	{true, "Dogecoin",      true, "DOGE", true,   30, true, 1000000000, true,   22, false, 0, false,  0, true, "\x19" "Dogecoin Signed Message:\n", true, 0x02facafd, true, 0x02fac398, true, false, },
+	{true, "Dash",          true, "DASH", true,   76, true,     100000, true,   16, false, 0, false,  0, true, "\x19" "DarkCoin Signed Message:\n", true, 0x02fe52cc, true, 0x02fe52f8, true, false, },
+	{true, "Zcash",         true, "ZEC",  true, 7352, true,    1000000, true, 7357, false, 0, false,  0, true, "\x16" "Zcash Signed Message:\n",    true, 0x0488b21e, true, 0x0488ade4, true, false, },
+	{true, "Zcash Testnet", true, "TAZ",  true, 7461, true,   10000000, true, 7354, false, 0, false,  0, true, "\x16" "Zcash Signed Message:\n",    true, 0x043587cf, true, 0x04358394, true, false, },
+	{true, "Decred",        true, "DCR",  true, 1855, true,  100000000, true, 1818, false, 0, false,  0, true, "\x17" "Decred Signed Message:\n",   true, 0x02fda926, true, 0x02fda4e8, true, false, },
 };
+
+const CoinType *coinByShortcut(const char *shortcut)
+{
+	if (!shortcut) return 0;
+	int i;
+	for (i = 0; i < COINS_COUNT; i++) {
+		if (strcmp(shortcut, coins[i].coin_shortcut) == 0) {
+			return &(coins[i]);
+		}
+	}
+	return 0;
+}
 
 const CoinType *coinByName(const char *name)
 {
 	if (!name) return 0;
-	for (int i = 0; i < COINS_COUNT; i++) {
+	int i;
+	for (i = 0; i < COINS_COUNT; i++) {
 		if (strcmp(name, coins[i].coin_name) == 0) {
 			return &(coins[i]);
 		}
@@ -49,7 +63,8 @@ const CoinType *coinByName(const char *name)
 
 const CoinType *coinByAddressType(uint32_t address_type)
 {
-	for (int i = 0; i < COINS_COUNT; i++) {
+	int i;
+	for (i = 0; i < COINS_COUNT; i++) {
 		if (address_type == coins[i].address_type) {
 			return &(coins[i]);
 		}
@@ -76,6 +91,14 @@ bool coinExtractAddressTypeRaw(const CoinType *coin, const uint8_t *addr_raw, ui
 	}
 	if (coin->has_address_type_p2sh && address_check_prefix(addr_raw, coin->address_type_p2sh)) {
 		*address_type = coin->address_type_p2sh;
+		return true;
+	}
+	if (coin->has_address_type_p2wpkh && address_check_prefix(addr_raw, coin->address_type_p2wpkh)) {
+		*address_type = coin->address_type_p2wpkh;
+		return true;
+	}
+	if (coin->has_address_type_p2wsh && address_check_prefix(addr_raw, coin->address_type_p2wsh)) {
+		*address_type = coin->address_type_p2wsh;
 		return true;
 	}
 	*address_type = 0;
