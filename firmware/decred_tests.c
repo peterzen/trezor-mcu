@@ -90,7 +90,7 @@ void random_buffer(uint8_t *buf, size_t len)
 
 
 
-START_TEST(decred_test_features)
+START_TEST(test_decred_features)
 {
   const CoinType *coin;
   coin = coinByName("Decred");
@@ -105,7 +105,7 @@ END_TEST
 
 
 
-START_TEST(decred_test_pgpwordlist)
+START_TEST(test_decred_pgpwordlist)
 {
 
 	static const char *vectors[] = {
@@ -180,13 +180,11 @@ START_TEST(decred_test_pgpwordlist)
 }
 END_TEST
 
-START_TEST(decred_test_wordlist_seed)
+START_TEST(test_decred_wordlist_seed)
 {
   const char *seed_in = "6ec70a6e996e374189a912267b331368a5d6ea57cc497bcf9a8c9bfc6a1f1770";
   const char *wordlist = decred_seed_to_wordlist(fromhex(seed_in), strlen(seed_in)/2);
   ck_assert_str_eq(wordlist, "goldfish retraction allow headwaters prowler headwaters clamshell decadence nightbird passenger atlas caretaker kickoff concurrent Aztec gravity reindeer speculate Trojan Eskimo spigot dinosaur kickoff Saturday pupil megaton puppy Wilmington Geiger businessman banjo hesitate snapshot");
-
-
 }
 END_TEST
 
@@ -197,16 +195,16 @@ Suite *test_suite(void)
 	Suite *s = suite_create("decred");
 	TCase *tc;
 
-  tc = tcase_create("decred_test_pgpwordlist");
-	tcase_add_test(tc, decred_test_pgpwordlist);
+  tc = tcase_create("decred_pgpwordlist");
+	tcase_add_test(tc, test_decred_pgpwordlist);
 	suite_add_tcase(s, tc);
 
-  tc = tcase_create("decred_test_features");
-	tcase_add_test(tc, decred_test_features);
+  tc = tcase_create("decred_features");
+	tcase_add_test(tc, test_decred_features);
 	suite_add_tcase(s, tc);
 
-  tc = tcase_create("decred_test_wordlist_seed");
-	tcase_add_test(tc, decred_test_wordlist_seed);
+  tc = tcase_create("decred_wordlist_seed");
+	tcase_add_test(tc, test_decred_wordlist_seed);
 	suite_add_tcase(s, tc);
 
 	return s;
