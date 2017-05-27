@@ -85,7 +85,7 @@ typedef struct _CoinType {
     bool has_coin_name;
     char coin_name[17];
     bool has_coin_shortcut;
-    char coin_shortcut[9];
+    char coin_shortcut[10];
     bool has_address_type;
     uint32_t address_type;
     bool has_maxfee_kb;
@@ -398,7 +398,7 @@ extern const pb_field_t IdentityType_fields[7];
 /* Maximum encoded size of messages (where known) */
 #define HDNodeType_size                          121
 #define HDNodePathType_size                      171
-#define CoinType_size                            101
+#define CoinType_size                            102
 #define MultisigRedeemScriptType_size            3741
 #define TxInputType_size                         5508
 #define TxOutputType_size                        3947
