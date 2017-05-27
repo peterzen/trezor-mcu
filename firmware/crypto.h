@@ -55,4 +55,7 @@ int cryptoMultisigFingerprint(const MultisigRedeemScriptType *multisig, uint8_t 
 
 int cryptoIdentityFingerprint(const IdentityType *identity, uint8_t *hash);
 
+
+int cryptoDecredMessageSign(const CoinType *coin, HDNode *node, const uint8_t *message, size_t message_len, uint8_t *signature);
+
 #endif
