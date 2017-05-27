@@ -30,7 +30,7 @@
 
 
 // Returns the PGP word list encoding of b when found at index.
-const char *pgp_byte_to_mnemonic(uint8_t byte, uint16_t index){
+const char *decred_pgp_byte_to_mnemonic(uint8_t byte, uint16_t index){
 	uint16_t bb = (uint16_t)byte * 2;
 	if(index % 2){
 		++bb;
@@ -39,7 +39,7 @@ const char *pgp_byte_to_mnemonic(uint8_t byte, uint16_t index){
 }
 
 
-char *pgp_mnemonic_from_data(const uint8_t *data, int seed_len)
+char *decred_pgp_mnemonic_from_data(const uint8_t *data, int seed_len)
 {
 
 	if (seed_len < MIN_SEED_LENGTH || seed_len > MAX_SEED_LENGTH) {
@@ -53,7 +53,7 @@ char *pgp_mnemonic_from_data(const uint8_t *data, int seed_len)
 	char *pos = mnemonics;
 
 	for (i = 0; i < seed_len; i++) {
-		word = pgp_byte_to_mnemonic(data[i], i);
+		word = decred_pgp_byte_to_mnemonic(data[i], i);
 		word_len = strlen(word);
 		memcpy(pos, word, word_len);
 		pos += word_len;
@@ -74,7 +74,6 @@ char *pgp_mnemonic_from_data(const uint8_t *data, int seed_len)
 }
 
 
-
 static int get_word_index(const char *word)
 {
 	for(uint16_t i = 0; pgpwordlist[i]; i++){
@@ -86,7 +85,7 @@ static int get_word_index(const char *word)
 	return -1;
 }
 
-int pgp_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH])
+int decred_pgp_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH])
 {
 	char mnemonic_tokens[WORDLIST_MAX_LENGTH];
 	int byte, idx;
@@ -114,10 +113,4 @@ int pgp_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH])
 		idx++;
 	}
 	return 0;
-}
-
-
-const char * const *pgp_mnemonic_wordlist(void)
-{
-	return pgpwordlist;
 }

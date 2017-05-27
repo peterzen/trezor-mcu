@@ -32,14 +32,10 @@
 
 
 
-const char *pgp_byte_to_mnemonic(uint8_t byte, uint16_t index);
+const char *decred_pgp_byte_to_mnemonic(uint8_t byte, uint16_t index);
 
-char *pgp_mnemonic_from_data(const uint8_t *data, int len);
+char *decred_pgp_mnemonic_from_data(const uint8_t *data, int len);
 
-int pgp_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH]);
-
-
-const char * const *pgp_mnemonic_wordlist(void);
-
+int decred_pgp_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH]);
 
 #endif

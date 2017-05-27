@@ -28,17 +28,11 @@
 #include "check_mem.h"
 
 #include "coins.h"
-#include "curves.h"
-#include "bip32.h"
-#include "bip39.h"
 
 #include "decred.h"
 #include "decred_pgpwordlist.h"
 
 #define FROMHEX_MAXLEN 256
-
-#define VERSION_PUBLIC  0x0488b21e
-#define VERSION_PRIVATE 0x0488ade4
 
 void tohex(uint8_t * in, size_t insz, char *out, uint8_t outsz)
 {
@@ -150,9 +144,9 @@ START_TEST(decred_test_pgpwordlist)
 	retval_expected = vectors + 3;
 
 	while(*seed && *word_list_in && *word_list_out && *retval_expected){
-		m = pgp_mnemonic_from_data(fromhex(*seed), strlen(*seed)/2);
-		pgp_mnemonic_to_seed(m, seed_output_1);
-		retval_2 = pgp_mnemonic_to_seed(*word_list_in, seed_output_2);
+		m = decred_pgp_mnemonic_from_data(fromhex(*seed), strlen(*seed)/2);
+		decred_pgp_mnemonic_to_seed(m, seed_output_1);
+		retval_2 = decred_pgp_mnemonic_to_seed(*word_list_in, seed_output_2);
 
 		// printf("retval_1=%x\n\n", retval_1);
 		// printf("retval_2=%x\n\n", retval_2);

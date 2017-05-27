@@ -46,8 +46,8 @@ static uint8_t pgp_checksum_byte(const uint8_t *data, uint8_t len)
 const char *decred_seed_to_wordlist(const uint8_t *data, int seed_len){
 
   uint8_t checksum = pgp_checksum_byte(data, seed_len);
-  const char *checksum_word = pgp_byte_to_mnemonic(checksum, seed_len);
-  char *wordlist = pgp_mnemonic_from_data(data, seed_len);
+  const char *checksum_word = decred_pgp_byte_to_mnemonic(checksum, seed_len);
+  char *wordlist = decred_pgp_mnemonic_from_data(data, seed_len);
 
   int word_len = strlen(checksum_word);
   char *p = wordlist + strlen(wordlist);
