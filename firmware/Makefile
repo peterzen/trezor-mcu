@@ -70,7 +70,6 @@ CFLAGS += -DUSE_DECRED=1
 DECRED_TEST_OBJS = decred_pgpwordlist.o
 DECRED_TEST_OBJS += decred.o
 DECRED_TEST_OBJS += coins.o
-DECRED_TEST_OBJS += ../rng.o
 DECRED_TEST_OBJS += ../vendor/trezor-crypto/address.o
 DECRED_TEST_OBJS += ../vendor/trezor-crypto/base58.o
 DECRED_TEST_OBJS += ../vendor/trezor-crypto/bignum.o

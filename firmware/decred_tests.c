@@ -1,18 +1,22 @@
 /*
- * Copyright (c) 2017 Peter Banik
+ * This file is part of the TREZOR project.
  *
- * Permission to use, copy, modify, and distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * Copyright (C) 2016 Peter Banik <peter@prioritylane.com>
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 #include <stdint.h>
 #include <stdio.h>
@@ -69,6 +73,25 @@ const uint8_t *fromhex(const char *str)
 		buf[i] = c;
 	}
 	return buf;
+}
+
+
+//  mock random number generator for off-device testing
+uint32_t random32(void)
+{
+	return rand();
+}
+
+void random_buffer(uint8_t *buf, size_t len)
+{
+	size_t i;
+	uint32_t r = 0;
+	for (i = 0; i < len; i++) {
+		if (i % 4 == 0) {
+			r = random32();
+		}
+		buf[i] = (r >> ((i % 4) * 8)) & 0xFF;
+	}
 }
 
 
@@ -166,10 +189,9 @@ END_TEST
 START_TEST(decred_test_wordlist_seed)
 {
   const char *seed_in = "6ec70a6e996e374189a912267b331368a5d6ea57cc497bcf9a8c9bfc6a1f1770";
-
   const char *wordlist = decred_seed_to_wordlist(fromhex(seed_in), strlen(seed_in)/2);
-
   ck_assert_str_eq(wordlist, "goldfish retraction allow headwaters prowler headwaters clamshell decadence nightbird passenger atlas caretaker kickoff concurrent Aztec gravity reindeer speculate Trojan Eskimo spigot dinosaur kickoff Saturday pupil megaton puppy Wilmington Geiger businessman banjo hesitate snapshot");
+
 
 }
 END_TEST
