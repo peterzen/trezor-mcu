@@ -22,7 +22,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <bsd/string.h>
 
 #include "sha2.h"
 #include "rand.h"
