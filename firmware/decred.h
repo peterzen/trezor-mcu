@@ -22,14 +22,27 @@
 #ifndef __DECRED_H__
 #define __DECRED_H__
 
-
 #include <stdbool.h>
 
+#define MAX_WORD_LENGTH 12
+#define MAX_SEED_LENGTH 32
+#define MIN_SEED_LENGTH 16
+#define RECOMMENDED_SEED_LENGTH 32
 
-const char *decred_seed_to_wordlist(const uint8_t *data, int seed_len);
+// 1 additional word added for storing checksum
+#define WORDLIST_MAX_LENGTH ((MAX_SEED_LENGTH + 1) * (MAX_WORD_LENGTH + 1) + 1)
+
+
+
+char *decred_pgp_words_from_data(const uint8_t *data, int len);
+
+int decred_mnemonic_to_seed(const char *mnemonics, uint8_t seed[MAX_SEED_LENGTH]);
+
+const char *decred_seed_to_mnemonic(const uint8_t *data, int seed_len);
 
 const char *decred_generate_seed(int strength);
 
+int decred_check_mnemonic(const char *mnemonic);
 
 
 #endif

@@ -30,7 +30,6 @@
 #include "coins.h"
 
 #include "decred.h"
-#include "decred_pgpwordlist.h"
 
 #define FROMHEX_MAXLEN 256
 
@@ -144,12 +143,10 @@ START_TEST(test_decred_pgpwordlist)
 	retval_expected = vectors + 3;
 
 	while(*seed && *word_list_in && *word_list_out && *retval_expected){
-		m = decred_pgp_mnemonic_from_data(fromhex(*seed), strlen(*seed)/2);
-		decred_pgp_mnemonic_to_seed(m, seed_output_1);
-		retval_2 = decred_pgp_mnemonic_to_seed(*word_list_in, seed_output_2);
+		m = decred_pgp_words_from_data(fromhex(*seed), strlen(*seed)/2);
+		decred_mnemonic_to_seed(m, seed_output_1);
+		retval_2 = decred_mnemonic_to_seed(*word_list_in, seed_output_2);
 
-		// printf("retval_1=%x\n\n", retval_1);
-		// printf("retval_2=%x\n\n", retval_2);
 		ck_assert_str_eq(m, *word_list_out);
 		ck_assert_mem_eq(seed_output_1, fromhex(*seed), strlen(*seed)/2);
 
@@ -167,24 +164,28 @@ START_TEST(test_decred_pgpwordlist)
 		word_list_out += 4;
 		retval_expected += 4;
 	}
-
-	// char outhex[64];
-
-	// tohex(seed_output_1, 20, outhex, 40);
-	// printf("seed_output_1=%s\n", outhex);
-
-
-	// char mnemonics_2[] = "stairway souvenir flytrap recipe adrift upcoming artist positive spearhead Pandora spaniel stupendous tonic concurrent transit Wichita lockup visitor flagpole escapade";
-	// uint8_t data_2[20] = fromhex("D1D464C004F00FB5C9A4C8D8E433E7FB7FF56256");
-
 }
 END_TEST
 
 START_TEST(test_decred_wordlist_seed)
 {
   const char *seed_in = "6ec70a6e996e374189a912267b331368a5d6ea57cc497bcf9a8c9bfc6a1f1770";
-  const char *wordlist = decred_seed_to_wordlist(fromhex(seed_in), strlen(seed_in)/2);
+  const char *wordlist = decred_seed_to_mnemonic(fromhex(seed_in), strlen(seed_in)/2);
   ck_assert_str_eq(wordlist, "goldfish retraction allow headwaters prowler headwaters clamshell decadence nightbird passenger atlas caretaker kickoff concurrent Aztec gravity reindeer speculate Trojan Eskimo spigot dinosaur kickoff Saturday pupil megaton puppy Wilmington Geiger businessman banjo hesitate snapshot");
+}
+END_TEST
+
+START_TEST(test_decred_check_mnemonic)
+{
+  int r;
+  r = decred_check_mnemonic("goldfish retraction allow headwaters prowler headwaters clamshell decadence nightbird passenger atlas caretaker kickoff concurrent Aztec gravity reindeer speculate Trojan Eskimo spigot dinosaur kickoff Saturday pupil megaton puppy Wilmington Geiger businessman banjo hesitate snapshot");
+  ck_assert_int_eq(r, 1);
+
+  r = decred_check_mnemonic("invalid retraction allow headwaters prowler headwaters clamshell decadence nightbird passenger atlas caretaker kickoff concurrent Aztec gravity reindeer speculate Trojan Eskimo spigot dinosaur kickoff Saturday pupil megaton puppy Wilmington Geiger businessman banjo hesitate invalid");
+  ck_assert_int_eq(r, 0);
+
+  r = decred_check_mnemonic("invalid invalid");
+  ck_assert_int_eq(r, 0);
 }
 END_TEST
 
@@ -205,6 +206,10 @@ Suite *test_suite(void)
 
   tc = tcase_create("decred_wordlist_seed");
 	tcase_add_test(tc, test_decred_wordlist_seed);
+	suite_add_tcase(s, tc);
+
+  tc = tcase_create("decred_check_mnemonic");
+	tcase_add_test(tc, test_decred_check_mnemonic);
 	suite_add_tcase(s, tc);
 
 	return s;

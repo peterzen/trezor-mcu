@@ -19,7 +19,6 @@ OBJS += signing.o
 OBJS += crypto.o
 OBJS += ethereum.o
 OBJS += ethereum_tokens.o
-OBJS += decred_pgpwordlist.o
 OBJS += decred.o
 
 OBJS += debug.o
@@ -67,8 +66,7 @@ CFLAGS += -DSCM_REVISION='"$(shell git rev-parse HEAD | sed 's:\(..\):\\x\1:g')"
 CFLAGS += -DUSE_ETHEREUM=1
 CFLAGS += -DUSE_DECRED=1
 
-DECRED_TEST_OBJS = decred_pgpwordlist.o
-DECRED_TEST_OBJS += decred.o
+DECRED_TEST_OBJS = decred.o
 DECRED_TEST_OBJS += coins.o
 DECRED_TEST_OBJS += ../vendor/trezor-crypto/address.o
 DECRED_TEST_OBJS += ../vendor/trezor-crypto/base58.o
