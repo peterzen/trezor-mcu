@@ -64,7 +64,7 @@ CFLAGS += -DQR_MAX_VERSION=0
 CFLAGS += -DDEBUG_LINK=0
 CFLAGS += -DDEBUG_LOG=0
 CFLAGS += -DSCM_REVISION='"$(shell git rev-parse HEAD | sed 's:\(..\):\\x\1:g')"'
-CFLAGS += -DUSE_ETHEREUM=0
+CFLAGS += -DUSE_ETHEREUM=1
 CFLAGS += -DUSE_DECRED=1
 
 DECRED_TEST_OBJS = decred_pgpwordlist.o
