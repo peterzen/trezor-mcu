@@ -2,7 +2,7 @@ Features.vendor				max_size:33
 Features.device_id			max_size:25
 Features.language			max_size:17
 Features.label				max_size:33
-Features.coins				max_count:9
+Features.coins				max_count:10
 Features.revision			max_size:20
 Features.bootloader_hash		max_size:32
 
@@ -42,6 +42,11 @@ LoadDevice.mnemonic			max_size:241
 LoadDevice.pin				max_size:10
 LoadDevice.language			max_size:17
 LoadDevice.label			max_size:33
+
+DecredLoadDevice.mnemonic			max_size:429
+DecredLoadDevice.pin				max_size:10
+DecredLoadDevice.language			max_size:17
+DecredLoadDevice.label			max_size:33
 
 ResetDevice.language			max_size:17
 ResetDevice.label			max_size:33
@@ -129,7 +134,7 @@ FirmwareUpload				skip_message:true
 DebugLinkState.layout			max_size:1024
 DebugLinkState.pin			max_size:10
 DebugLinkState.matrix			max_size:10
-DebugLinkState.mnemonic			max_size:241
+DebugLinkState.mnemonic			max_size:431
 DebugLinkState.reset_word		max_size:12
 DebugLinkState.reset_entropy		max_size:128
 DebugLinkState.recovery_fake_word	max_size:12

@@ -22,7 +22,7 @@ typedef struct _Storage {
     bool has_node;
     HDNodeType node;
     bool has_mnemonic;
-    char mnemonic[241];
+    char mnemonic[430];
     bool has_passphrase_protection;
     bool passphrase_protection;
     bool has_pin_failed_attempts;
@@ -64,7 +64,7 @@ typedef struct _Storage {
 extern const pb_field_t Storage_fields[12];
 
 /* Maximum encoded size of messages (where known) */
-#define Storage_size                             (1365 + HDNodeType_size)
+#define Storage_size                             (1554 + HDNodeType_size)
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -66,6 +66,8 @@ void storage_setU2FCounter(uint32_t u2fcounter);
 
 bool storage_isInitialized(void);
 
+void storage_decredLoadDevice(DecredLoadDevice *msg);
+
 extern Storage storage;
 
 extern char storage_uuid_str[25];

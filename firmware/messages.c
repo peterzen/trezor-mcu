@@ -74,6 +74,8 @@ static const struct MessagesMap_t MessagesMap[] = {
 	{'n', 'i', MessageType_MessageType_EthereumGetAddress,		EthereumGetAddress_fields,	(void (*)(void *))fsm_msgEthereumGetAddress},
 	{'n', 'i', MessageType_MessageType_EthereumSignTx,		EthereumSignTx_fields,		(void (*)(void *))fsm_msgEthereumSignTx},
 	{'n', 'i', MessageType_MessageType_EthereumTxAck,		EthereumTxAck_fields,		(void (*)(void *))fsm_msgEthereumTxAck},
+	{'n', 'i', MessageType_MessageType_DecredLoadDevice,		DecredLoadDevice_fields,		(void (*)(void *))fsm_msgDecredLoadDevice},
+
 	// out messages
 	{'n', 'o', MessageType_MessageType_Success,				Success_fields,				0},
 	{'n', 'o', MessageType_MessageType_Failure,				Failure_fields,				0},

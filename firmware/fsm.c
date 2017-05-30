@@ -388,6 +388,34 @@ void fsm_msgLoadDevice(LoadDevice *msg)
 	layoutHome();
 }
 
+
+
+void fsm_msgDecredLoadDevice(DecredLoadDevice *msg)
+{
+	CHECK_NOT_INITIALIZED
+
+	layoutDialogSwipe(&bmp_icon_question, "Cancel", "I take the risk", NULL, "Loading private seed", "is not recommended.", "Continue only if you", "know what you are", "doing!", NULL);
+	if (!protectButton(ButtonRequestType_ButtonRequest_ProtectCall, false)) {
+		fsm_sendFailure(FailureType_Failure_ActionCancelled, "Load cancelled");
+		layoutHome();
+		return;
+	}
+
+	if (msg->has_mnemonic) {
+		if (!decred_check_mnemonic(msg->mnemonic)) {
+			fsm_sendFailure(FailureType_Failure_ActionCancelled, "Invalid word in PGP word list");
+			layoutHome();
+			return;
+		}
+	}
+
+	storage_decredLoadDevice(msg);
+	storage_commit();
+	fsm_sendSuccess("Device loaded");
+	layoutHome();
+}
+
+
 void fsm_msgResetDevice(ResetDevice *msg)
 {
 	CHECK_NOT_INITIALIZED

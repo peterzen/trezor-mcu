@@ -78,7 +78,8 @@ typedef enum _MessageType {
     MessageType_MessageType_DebugLinkMemoryRead = 110,
     MessageType_MessageType_DebugLinkMemory = 111,
     MessageType_MessageType_DebugLinkMemoryWrite = 112,
-    MessageType_MessageType_DebugLinkFlashErase = 113
+    MessageType_MessageType_DebugLinkFlashErase = 113,
+    MessageType_MessageType_DecredLoadDevice = 114
 } MessageType;
 
 /* Struct definitions */
@@ -262,7 +263,7 @@ typedef struct _DebugLinkState {
     bool has_matrix;
     char matrix[10];
     bool has_mnemonic;
-    char mnemonic[241];
+    char mnemonic[431];
     bool has_node;
     HDNodeType node;
     bool has_passphrase_protection;
@@ -276,6 +277,23 @@ typedef struct _DebugLinkState {
     bool has_recovery_word_pos;
     uint32_t recovery_word_pos;
 } DebugLinkState;
+
+typedef struct _DecredLoadDevice {
+    bool has_mnemonic;
+    char mnemonic[429];
+    bool has_node;
+    HDNodeType node;
+    bool has_pin;
+    char pin[10];
+    bool has_passphrase_protection;
+    bool passphrase_protection;
+    bool has_language;
+    char language[17];
+    bool has_label;
+    char label[33];
+    bool has_u2f_counter;
+    uint32_t u2f_counter;
+} DecredLoadDevice;
 
 typedef struct {
     size_t size;
@@ -814,6 +832,7 @@ extern const char GetPublicKey_coin_name_default[17];
 extern const char GetAddress_coin_name_default[17];
 extern const InputScriptType GetAddress_script_type_default;
 extern const char LoadDevice_language_default[17];
+extern const char DecredLoadDevice_language_default[17];
 extern const uint32_t ResetDevice_strength_default;
 extern const char ResetDevice_language_default[17];
 extern const char RecoveryDevice_language_default[17];
@@ -828,7 +847,7 @@ extern const uint32_t SignTx_lock_time_default;
 /* Initializer values for message structs */
 #define Initialize_init_default                  {0}
 #define GetFeatures_init_default                 {0}
-#define Features_init_default                    {false, "", false, 0, false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, "", false, "", 0, {CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default}, false, 0, false, {0, {0}}, false, {0, {0}}, false, 0, false, 0, false, 0, false, 0}
+#define Features_init_default                    {false, "", false, 0, false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, "", false, "", 0, {CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default, CoinType_init_default}, false, 0, false, {0, {0}}, false, {0, {0}}, false, 0, false, 0, false, 0, false, 0}
 #define ClearSession_init_default                {0}
 #define ApplySettings_init_default               {false, "", false, "", false, 0, false, {0, {0}}}
 #define ChangePin_init_default                   {false, 0}
@@ -852,6 +871,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define EthereumAddress_init_default             {{0, {0}}}
 #define WipeDevice_init_default                  {0}
 #define LoadDevice_init_default                  {false, "", false, HDNodeType_init_default, false, "", false, 0, false, "english", false, "", false, 0, false, 0}
+#define DecredLoadDevice_init_default            {false, "", false, HDNodeType_init_default, false, "", false, 0, false, "english", false, "", false, 0}
 #define ResetDevice_init_default                 {false, 0, false, 256u, false, 0, false, 0, false, "english", false, "", false, 0}
 #define EntropyRequest_init_default              {0}
 #define EntropyAck_init_default                  {false, {0, {0}}}
@@ -892,7 +912,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define DebugLinkFlashErase_init_default         {false, 0}
 #define Initialize_init_zero                     {0}
 #define GetFeatures_init_zero                    {0}
-#define Features_init_zero                       {false, "", false, 0, false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, "", false, "", 0, {CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero}, false, 0, false, {0, {0}}, false, {0, {0}}, false, 0, false, 0, false, 0, false, 0}
+#define Features_init_zero                       {false, "", false, 0, false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, "", false, "", 0, {CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero, CoinType_init_zero}, false, 0, false, {0, {0}}, false, {0, {0}}, false, 0, false, 0, false, 0, false, 0}
 #define ClearSession_init_zero                   {0}
 #define ApplySettings_init_zero                  {false, "", false, "", false, 0, false, {0, {0}}}
 #define ChangePin_init_zero                      {false, 0}
@@ -916,6 +936,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define EthereumAddress_init_zero                {{0, {0}}}
 #define WipeDevice_init_zero                     {0}
 #define LoadDevice_init_zero                     {false, "", false, HDNodeType_init_zero, false, "", false, 0, false, "", false, "", false, 0, false, 0}
+#define DecredLoadDevice_init_zero               {false, "", false, HDNodeType_init_zero, false, "", false, 0, false, "", false, "", false, 0}
 #define ResetDevice_init_zero                    {false, 0, false, 0, false, 0, false, 0, false, "", false, "", false, 0}
 #define EntropyRequest_init_zero                 {0}
 #define EntropyAck_init_zero                     {false, {0, {0}}}
@@ -993,6 +1014,13 @@ extern const uint32_t SignTx_lock_time_default;
 #define DebugLinkState_reset_entropy_tag         8
 #define DebugLinkState_recovery_fake_word_tag    9
 #define DebugLinkState_recovery_word_pos_tag     10
+#define DecredLoadDevice_mnemonic_tag            1
+#define DecredLoadDevice_node_tag                2
+#define DecredLoadDevice_pin_tag                 3
+#define DecredLoadDevice_passphrase_protection_tag 4
+#define DecredLoadDevice_language_tag            5
+#define DecredLoadDevice_label_tag               6
+#define DecredLoadDevice_u2f_counter_tag         7
 #define DecryptMessage_address_n_tag             1
 #define DecryptMessage_nonce_tag                 2
 #define DecryptMessage_message_tag               3
@@ -1153,6 +1181,7 @@ extern const pb_field_t Address_fields[2];
 extern const pb_field_t EthereumAddress_fields[2];
 extern const pb_field_t WipeDevice_fields[1];
 extern const pb_field_t LoadDevice_fields[9];
+extern const pb_field_t DecredLoadDevice_fields[8];
 extern const pb_field_t ResetDevice_fields[8];
 extern const pb_field_t EntropyRequest_fields[1];
 extern const pb_field_t EntropyAck_fields[2];
@@ -1195,7 +1224,7 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 /* Maximum encoded size of messages (where known) */
 #define Initialize_size                          0
 #define GetFeatures_size                         0
-#define Features_size                            (263 + 9*CoinType_size)
+#define Features_size                            (269 + 10*CoinType_size)
 #define ClearSession_size                        0
 #define ApplySettings_size                       1083
 #define ChangePin_size                           2
@@ -1219,6 +1248,7 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 #define EthereumAddress_size                     22
 #define WipeDevice_size                          0
 #define LoadDevice_size                          (326 + HDNodeType_size)
+#define DecredLoadDevice_size                    (512 + HDNodeType_size)
 #define ResetDevice_size                         72
 #define EntropyRequest_size                      0
 #define EntropyAck_size                          131
@@ -1250,7 +1280,7 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 #define FirmwareErase_size                       0
 #define DebugLinkDecision_size                   2
 #define DebugLinkGetState_size                   0
-#define DebugLinkState_size                      (1468 + HDNodeType_size)
+#define DebugLinkState_size                      (1658 + HDNodeType_size)
 #define DebugLinkStop_size                       0
 #define DebugLinkLog_size                        300
 #define DebugLinkMemoryRead_size                 12

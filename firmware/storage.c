@@ -297,6 +297,45 @@ void storage_loadDevice(LoadDevice *msg)
 	}
 }
 
+
+
+void storage_decredLoadDevice(DecredLoadDevice *msg)
+{
+	storage_reset();
+
+	storage.has_imported = true;
+	storage.imported = true;
+
+	if (msg->has_pin > 0) {
+		storage_setPin(msg->pin);
+	}
+
+	if (msg->has_passphrase_protection) {
+		storage.has_passphrase_protection = true;
+		storage.passphrase_protection = msg->passphrase_protection;
+	} else {
+		storage.has_passphrase_protection = false;
+	}
+
+	storage.has_mnemonic = true;
+	storage.has_node = false;
+	strlcpy(storage.mnemonic, msg->mnemonic, sizeof(storage.mnemonic));
+	sessionSeedCached = false;
+	memset(&sessionSeed, 0, sizeof(sessionSeed));
+
+	if (msg->has_language) {
+		storage_setLanguage(msg->language);
+	}
+
+	if (msg->has_label) {
+		storage_setLabel(msg->label);
+	}
+
+	if (msg->has_u2f_counter) {
+		storage_setU2FCounter(msg->u2f_counter);
+	}
+}
+
 void storage_setLabel(const char *label)
 {
 	if (!label) return;
