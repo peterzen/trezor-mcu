@@ -40,6 +40,7 @@
 #include "protect.h"
 #include "layout2.h"
 #include "usb.h"
+#include "decred.h"
 
 Storage storage;
 
@@ -63,7 +64,7 @@ The area for pin failures looks like this:
 0 ... 0 pinfail 0xffffffff .. 0xffffffff
 The pinfail is a binary number of the form 1...10...0,
 the number of zeros is the number of pin failures.
-This layout is used because we can only clear bits without 
+This layout is used because we can only clear bits without
 erasing the flash.
 
 The area for u2f counter updates is just a sequence of zero-bits
@@ -397,13 +398,13 @@ const uint8_t *storage_getSeed(bool usePassphrase)
 		// if storage was not imported (i.e. it was properly generated or recovered)
 		if (!storage.has_imported || !storage.imported) {
 			// test whether mnemonic is a valid BIP-0039 mnemonic
-			if (!mnemonic_check(storage.mnemonic)) {
+			if (!decred_check_mnemonic(storage.mnemonic)) {
 				// and if not then halt the device
 				storage_show_error();
 			}
 		}
 		char oldTiny = usbTiny(1);
-		mnemonic_to_seed(storage.mnemonic, usePassphrase ? sessionPassphrase : "", sessionSeed, get_root_node_callback); // BIP-0039
+		decred_mnemonic_to_seed(storage.mnemonic, sessionSeed); // BIP-0039
 		usbTiny(oldTiny);
 		sessionSeedCached = true;
 		sessionSeedUsesPassphrase = usePassphrase;
@@ -446,8 +447,8 @@ bool storage_getRootNode(HDNode *node, const char *curve, bool usePassphrase)
 	if (seed == NULL) {
 		return false;
 	}
-	
-	return hdnode_from_seed(seed, 64, curve, node);
+
+	return hdnode_from_seed(seed, 32, curve, node);
 }
 
 const char *storage_getLabel(void)

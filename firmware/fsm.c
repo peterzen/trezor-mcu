@@ -50,7 +50,7 @@
 #include "secp256k1.h"
 #include <libopencm3/stm32/flash.h>
 #include "ethereum.h"
-
+#include "decred.h"
 // message methods
 
 static uint8_t msg_resp[MSG_OUT_SIZE] __attribute__ ((aligned));
@@ -329,7 +329,7 @@ void fsm_msgGetPublicKey(GetPublicKey *msg)
 		/* get parent node */
 		node = fsm_getDerivedNode(curve, msg->address_n, msg->address_n_count - 1);
 		if (!node) return;
-		fingerprint = hdnode_fingerprint(node);
+		fingerprint = decred_hdnode_fingerprint(node);
 		/* get child */
 		hdnode_private_ckd(node, msg->address_n[msg->address_n_count - 1]);
 	}
@@ -358,7 +358,7 @@ void fsm_msgGetPublicKey(GetPublicKey *msg)
 		resp->node.public_key.bytes[0] = 0;
 	}
 	resp->has_xpub = true;
-	hdnode_serialize_public(node, fingerprint, coin->xpub_magic, resp->xpub, sizeof(resp->xpub));
+	decred_hdnode_serialize_public(node, fingerprint, coin->xpub_magic, resp->xpub, sizeof(resp->xpub));
 	msg_write(MessageType_MessageType_PublicKey, resp);
 	layoutHome();
 }

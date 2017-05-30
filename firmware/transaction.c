@@ -131,7 +131,7 @@ bool compute_address(const CoinType *coin,
 		sha256_Raw(raw, 22, digest);
 		address_write_prefix_bytes(coin->address_type_p2sh, raw);
 		ripemd160(digest, 32, raw + prelen);
-		if (!base58_encode_check(raw, prelen + 20, address, MAX_ADDR_SIZE)) {
+		if (!decred_base58_encode_check(raw, prelen + 20, address, MAX_ADDR_SIZE)) {
 			return 0;
 		}
 	} else {
