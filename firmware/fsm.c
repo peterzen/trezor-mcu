@@ -389,7 +389,7 @@ void fsm_msgLoadDevice(LoadDevice *msg)
 }
 
 
-
+#ifdef USE_DECRED
 void fsm_msgDecredLoadDevice(DecredLoadDevice *msg)
 {
 	CHECK_NOT_INITIALIZED
@@ -454,6 +454,8 @@ void fsm_msgDecredGetAddress(DecredGetAddress *msg)
 	msg_write(MessageType_MessageType_DecredAddress, resp);
 	layoutHome();
 }
+
+#endif
 
 void fsm_msgResetDevice(ResetDevice *msg)
 {
