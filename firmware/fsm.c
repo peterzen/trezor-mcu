@@ -416,6 +416,45 @@ void fsm_msgDecredLoadDevice(DecredLoadDevice *msg)
 }
 
 
+void fsm_msgDecredGetAddress(DecredGetAddress *msg)
+{
+	RESP_INIT(DecredAddress);
+
+	CHECK_INITIALIZED
+
+	CHECK_PIN
+
+	HDNode *node;
+	if (msg->address_n_count == 0) {
+		/* get master node */
+		node = fsm_getDerivedNode(SECP256K1_NAME, msg->address_n, 0);
+	} else {
+		/* get parent node */
+		node = fsm_getDerivedNode(SECP256K1_NAME, msg->address_n, msg->address_n_count - 1);
+		if (!node) return;
+		/* get child */
+		hdnode_private_ckd(node, msg->address_n[msg->address_n_count - 1]);
+	}
+	hdnode_fill_public_key(node);
+
+	if(!decred_hdnode_get_address(node->public_key, 1855, resp->address, 65)){
+		fsm_sendFailure(FailureType_Failure_ActionCancelled, "Can't encode address");
+	}
+
+	if (msg->has_show_display && msg->show_display) {
+		const char *desc = "Address:";
+		layoutAddress(resp->address, desc);
+		if (!protectButton(ButtonRequestType_ButtonRequest_Address, true)) {
+			fsm_sendFailure(FailureType_Failure_ActionCancelled, "Show address cancelled");
+			layoutHome();
+			return;
+		}
+	}
+
+	msg_write(MessageType_MessageType_DecredAddress, resp);
+	layoutHome();
+}
+
 void fsm_msgResetDevice(ResetDevice *msg)
 {
 	CHECK_NOT_INITIALIZED

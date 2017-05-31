@@ -61,7 +61,10 @@ void fsm_msgEthereumGetAddress(EthereumGetAddress *msg);
 void fsm_msgEthereumSignTx(EthereumSignTx *msg);
 void fsm_msgEthereumTxAck(EthereumTxAck *msg);
 
+#if USE_DECRED
 void fsm_msgDecredLoadDevice(DecredLoadDevice *msg);
+void fsm_msgDecredGetAddress(DecredGetAddress *msg);
+#endif
 
 // debug message functions
 #if DEBUG_LINK
