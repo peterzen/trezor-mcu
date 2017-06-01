@@ -108,7 +108,7 @@ int main(void)
 	storage_clearPinArea(); // reset PIN failures if debug link
 #endif
 
-	oledDrawBitmap(40, 0, &bmp_logo64);
+	oledDrawBitmap(40, 0, &bmp_decred64);
 	oledRefresh();
 
 	storage_init();

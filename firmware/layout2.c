@@ -79,7 +79,7 @@ void layoutHome(void)
 			oledDrawBitmap(44, 4, &bmp_logo48);
 			oledDrawStringCenter(OLED_HEIGHT - 8, label);
 		} else {
-			oledDrawBitmap(40, 0, &bmp_logo64);
+			oledDrawBitmap(40, 0, &bmp_decred64);
 		}
 	}
 	oledRefresh();

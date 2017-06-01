@@ -93,7 +93,7 @@ int firmware_present;
 void bootloader_loop(void)
 {
 	oledClear();
-	oledDrawBitmap(0, 0, &bmp_logo64);
+	oledDrawBitmap(0, 0, &bmp_decred64);
 	if (firmware_present) {
 		oledDrawString(52, 0, "TREZOR");
 		static char serial[25];
