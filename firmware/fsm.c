@@ -389,7 +389,7 @@ void fsm_msgLoadDevice(LoadDevice *msg)
 }
 
 
-#ifdef USE_DECRED
+#if USE_DECRED
 void fsm_msgDecredLoadDevice(DecredLoadDevice *msg)
 {
 	CHECK_NOT_INITIALIZED
@@ -721,6 +721,15 @@ void fsm_msgEntropyAck(EntropyAck *msg)
 		reset_entropy(msg->entropy.bytes, msg->entropy.size);
 	} else {
 		reset_entropy(0, 0);
+	}
+}
+
+void fsm_msgDecredEntropyAck(DecredEntropyAck *msg)
+{
+	if (msg->has_entropy) {
+		decred_reset_entropy(msg->entropy.bytes, msg->entropy.size);
+	} else {
+		decred_reset_entropy(0, 0);
 	}
 }
 

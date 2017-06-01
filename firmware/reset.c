@@ -28,6 +28,7 @@
 #include "protect.h"
 #include "bip39.h"
 #include "util.h"
+#include "decred.h"
 
 static uint32_t strength;
 static uint8_t  int_entropy[32];
@@ -74,7 +75,77 @@ void reset_init(bool display_random, uint32_t _strength, bool passphrase_protect
 	awaiting_entropy = true;
 }
 
-static char current_word[10], current_word_display[11];
+#define MAX_MNEMONIC_WORD_LENGTH 12
+#define MAX_DISPLAYABLE_WORD_LENGTH 11
+
+static char current_word[MAX_MNEMONIC_WORD_LENGTH], current_word_display[MAX_DISPLAYABLE_WORD_LENGTH];
+
+static void confirm_mnemonic(const char *mnemonic, int word_count)
+{
+		int pass, word_pos, i = 0, j;
+
+		for (pass = 0; pass < 2; pass++) {
+			i = 0;
+			for (word_pos = 1; word_pos <= word_count; word_pos++) {
+				// copy current_word
+				j = 0;
+				while (mnemonic[i] != ' ' && mnemonic[i] != 0 && j + 1 < (int)sizeof(current_word)) {
+					current_word[j] = mnemonic[i];
+					i++; j++;
+				}
+				current_word[j] = 0; if (mnemonic[i] != 0) i++;
+				char desc[] = "##th word is:";
+				if (word_pos < 10) {
+					desc[0] = ' ';
+				} else {
+					desc[0] = '0' + word_pos / 10;
+				}
+				desc[1] = '0' + word_pos % 10;
+				if (word_pos == 1 || word_pos == 21 || word_pos == 31) {
+					desc[2] = 's'; desc[3] = 't';
+				} else
+				if (word_pos == 2 || word_pos == 22 || word_pos == 32) {
+					desc[2] = 'n'; desc[3] = 'd';
+				} else
+				if (word_pos == 3 || word_pos == 23 || word_pos == 32) {
+					desc[2] = 'r'; desc[3] = 'd';
+				}
+				current_word_display[0] = 0x01;
+				for (j = 0; current_word[j] && j < (MAX_DISPLAYABLE_WORD_LENGTH - 2); j++) {
+					current_word_display[j + 1] = current_word[j] + 'A' - 'a';
+				}
+				current_word_display[j + 1] = 0;
+				if (word_pos == word_count) { // last word
+					if (pass == 1) {
+						layoutDialogSwipe(&bmp_icon_info, NULL, "Finish", NULL, "Please check the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
+					} else {
+						layoutDialogSwipe(&bmp_icon_info, NULL, "Again", NULL, "Write down the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
+					}
+				} else {
+					if (pass == 1) {
+						layoutDialogSwipe(&bmp_icon_info, NULL, "Next", NULL, "Please check the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
+					} else {
+						layoutDialogSwipe(&bmp_icon_info, NULL, "Next", NULL, "Write down the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
+					}
+				}
+				if (!protectButton(ButtonRequestType_ButtonRequest_ConfirmWord, true)) {
+					storage_reset();
+					layoutHome();
+					fsm_sendFailure(FailureType_Failure_Other, "Reset device aborted");
+					return;
+				}
+			}
+		}
+}
+
+static void calculate_entropy(uint8_t *_int_entropy, const uint8_t *ext_entropy, uint32_t len)
+{
+	SHA256_CTX ctx;
+	sha256_Init(&ctx);
+	sha256_Update(&ctx, _int_entropy, 32);
+	sha256_Update(&ctx, ext_entropy, len);
+	sha256_Final(&ctx, _int_entropy);
+}
 
 void reset_entropy(const uint8_t *ext_entropy, uint32_t len)
 {
@@ -82,75 +153,42 @@ void reset_entropy(const uint8_t *ext_entropy, uint32_t len)
 		fsm_sendFailure(FailureType_Failure_UnexpectedMessage, "Not in Reset mode");
 		return;
 	}
-	SHA256_CTX ctx;
-	sha256_Init(&ctx);
-	sha256_Update(&ctx, int_entropy, 32);
-	sha256_Update(&ctx, ext_entropy, len);
-	sha256_Final(&ctx, int_entropy);
+	calculate_entropy(int_entropy, ext_entropy, len);
 	strlcpy(storage.mnemonic, mnemonic_from_data(int_entropy, strength / 8), sizeof(storage.mnemonic));
 	memset(int_entropy, 0, 32);
 	awaiting_entropy = false;
 
-	int pass, word_pos, i = 0, j;
-
-	for (pass = 0; pass < 2; pass++) {
-		i = 0;
-		for (word_pos = 1; word_pos <= (int)strength/32*3; word_pos++) {
-			// copy current_word
-			j = 0;
-			while (storage.mnemonic[i] != ' ' && storage.mnemonic[i] != 0 && j + 1 < (int)sizeof(current_word)) {
-				current_word[j] = storage.mnemonic[i];
-				i++; j++;
-			}
-			current_word[j] = 0; if (storage.mnemonic[i] != 0) i++;
-			char desc[] = "##th word is:";
-			if (word_pos < 10) {
-				desc[0] = ' ';
-			} else {
-				desc[0] = '0' + word_pos / 10;
-			}
-			desc[1] = '0' + word_pos % 10;
-			if (word_pos == 1 || word_pos == 21) {
-				desc[2] = 's'; desc[3] = 't';
-			} else
-			if (word_pos == 2 || word_pos == 22) {
-				desc[2] = 'n'; desc[3] = 'd';
-			} else
-			if (word_pos == 3 || word_pos == 23) {
-				desc[2] = 'r'; desc[3] = 'd';
-			}
-			current_word_display[0] = 0x01;
-			for (j = 0; current_word[j]; j++) {
-				current_word_display[j + 1] = current_word[j] + 'A' - 'a';
-			}
-			current_word_display[j + 1] = 0;
-			if (word_pos == (int)strength/32*3) { // last word
-				if (pass == 1) {
-					layoutDialogSwipe(&bmp_icon_info, NULL, "Finish", NULL, "Please check the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
-				} else {
-					layoutDialogSwipe(&bmp_icon_info, NULL, "Again", NULL, "Write down the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
-				}
-			} else {
-				if (pass == 1) {
-					layoutDialogSwipe(&bmp_icon_info, NULL, "Next", NULL, "Please check the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
-				} else {
-					layoutDialogSwipe(&bmp_icon_info, NULL, "Next", NULL, "Write down the seed", NULL, (word_pos < 10 ? desc + 1 : desc), current_word_display, NULL, NULL);
-				}
-			}
-			if (!protectButton(ButtonRequestType_ButtonRequest_ConfirmWord, true)) {
-				storage_reset();
-				layoutHome();
-				fsm_sendFailure(FailureType_Failure_Other, "Reset device aborted");
-				return;
-			}
-		}
-	}
+	confirm_mnemonic(storage.mnemonic, (int)strength/32*3);
 
 	storage.has_mnemonic = true;
 	storage_commit();
 	fsm_sendSuccess("Device reset");
 	layoutHome();
 }
+
+#if USE_DECRED
+void decred_reset_entropy(const uint8_t *ext_entropy, uint32_t len)
+{
+	if (!awaiting_entropy) {
+		fsm_sendFailure(FailureType_Failure_UnexpectedMessage, "Not in Reset mode");
+		return;
+	}
+	calculate_entropy(int_entropy, ext_entropy, len);
+	strlcpy(storage.mnemonic, decred_seed_to_mnemonic(int_entropy, strength / 8), sizeof(storage.mnemonic));
+	memset(int_entropy, 0, 32);
+	awaiting_entropy = false;
+
+	confirm_mnemonic(storage.mnemonic, (int)strength/8 + 1);
+
+	storage.has_mnemonic = true;
+	storage_commit();
+	fsm_sendSuccess("Device reset");
+	layoutHome();
+}
+
+#endif
+
+
 
 #if DEBUG_LINK
 

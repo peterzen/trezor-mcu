@@ -51,6 +51,8 @@ DecredLoadDevice.label			max_size:33
 DecredGetAddress.address_n		max_count:8
 DecredAddress.address			max_size:60
 
+DecredEntropyAck.entropy			max_size:128
+
 ResetDevice.language			max_size:17
 ResetDevice.label			max_size:33
 

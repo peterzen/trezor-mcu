@@ -81,7 +81,8 @@ typedef enum _MessageType {
     MessageType_MessageType_DebugLinkFlashErase = 113,
     MessageType_MessageType_DecredLoadDevice = 114,
     MessageType_MessageType_DecredGetAddress = 115,
-    MessageType_MessageType_DecredAddress = 116
+    MessageType_MessageType_DecredAddress = 116,
+    MessageType_MessageType_DecredEntropyAck = 117
 } MessageType;
 
 /* Struct definitions */
@@ -283,6 +284,16 @@ typedef struct _DebugLinkState {
 typedef struct _DecredAddress {
     char address[60];
 } DecredAddress;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[128];
+} DecredEntropyAck_entropy_t;
+
+typedef struct _DecredEntropyAck {
+    bool has_entropy;
+    DecredEntropyAck_entropy_t entropy;
+} DecredEntropyAck;
 
 typedef struct _DecredGetAddress {
     size_t address_n_count;
@@ -887,6 +898,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredLoadDevice_init_default            {false, "", false, HDNodeType_init_default, false, "", false, 0, false, "english", false, "", false, 0}
 #define DecredGetAddress_init_default            {0, {0, 0, 0, 0, 0, 0, 0, 0}, false, 0}
 #define DecredAddress_init_default               {""}
+#define DecredEntropyAck_init_default            {false, {0, {0}}}
 #define ResetDevice_init_default                 {false, 0, false, 256u, false, 0, false, 0, false, "english", false, "", false, 0}
 #define EntropyRequest_init_default              {0}
 #define EntropyAck_init_default                  {false, {0, {0}}}
@@ -954,6 +966,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredLoadDevice_init_zero               {false, "", false, HDNodeType_init_zero, false, "", false, 0, false, "", false, "", false, 0}
 #define DecredGetAddress_init_zero               {0, {0, 0, 0, 0, 0, 0, 0, 0}, false, 0}
 #define DecredAddress_init_zero                  {""}
+#define DecredEntropyAck_init_zero               {false, {0, {0}}}
 #define ResetDevice_init_zero                    {false, 0, false, 0, false, 0, false, 0, false, "", false, "", false, 0}
 #define EntropyRequest_init_zero                 {0}
 #define EntropyAck_init_zero                     {false, {0, {0}}}
@@ -1032,6 +1045,7 @@ extern const uint32_t SignTx_lock_time_default;
 #define DebugLinkState_recovery_fake_word_tag    9
 #define DebugLinkState_recovery_word_pos_tag     10
 #define DecredAddress_address_tag                1
+#define DecredEntropyAck_entropy_tag             1
 #define DecredGetAddress_address_n_tag           1
 #define DecredGetAddress_show_display_tag        2
 #define DecredLoadDevice_mnemonic_tag            1
@@ -1204,6 +1218,7 @@ extern const pb_field_t LoadDevice_fields[9];
 extern const pb_field_t DecredLoadDevice_fields[8];
 extern const pb_field_t DecredGetAddress_fields[3];
 extern const pb_field_t DecredAddress_fields[2];
+extern const pb_field_t DecredEntropyAck_fields[2];
 extern const pb_field_t ResetDevice_fields[8];
 extern const pb_field_t EntropyRequest_fields[1];
 extern const pb_field_t EntropyAck_fields[2];
@@ -1273,6 +1288,7 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 #define DecredLoadDevice_size                    (512 + HDNodeType_size)
 #define DecredGetAddress_size                    50
 #define DecredAddress_size                       62
+#define DecredEntropyAck_size                    131
 #define ResetDevice_size                         72
 #define EntropyRequest_size                      0
 #define EntropyAck_size                          131

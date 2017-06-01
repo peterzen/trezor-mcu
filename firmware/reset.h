@@ -28,4 +28,8 @@ void reset_entropy(const uint8_t *ext_entropy, uint32_t len);
 uint32_t reset_get_int_entropy(uint8_t *entropy);
 const char *reset_get_word(void);
 
+#if USE_DECRED
+void decred_reset_entropy(const uint8_t *ext_entropy, uint32_t len);
+#endif
+
 #endif
