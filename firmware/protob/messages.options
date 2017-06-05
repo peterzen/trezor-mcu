@@ -53,6 +53,14 @@ DecredAddress.address			max_size:60
 
 DecredEntropyAck.entropy			max_size:128
 
+DecredSignMessage.address_n			max_count:8
+DecredSignMessage.message			max_size:1024
+
+DecredVerifyMessage.address			max_size:41
+DecredVerifyMessage.signature			max_size:65
+DecredVerifyMessage.message			max_size:1024
+
+
 ResetDevice.language			max_size:17
 ResetDevice.label			max_size:33
 

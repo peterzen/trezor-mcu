@@ -77,6 +77,8 @@ static const struct MessagesMap_t MessagesMap[] = {
 	{'n', 'i', MessageType_MessageType_DecredLoadDevice,		DecredLoadDevice_fields,		(void (*)(void *))fsm_msgDecredLoadDevice},
 	{'n', 'i', MessageType_MessageType_DecredGetAddress,		DecredGetAddress_fields,	(void (*)(void *))fsm_msgDecredGetAddress},
 	{'n', 'i', MessageType_MessageType_DecredEntropyAck,			DecredEntropyAck_fields,			(void (*)(void *))fsm_msgDecredEntropyAck},
+	{'n', 'i', MessageType_MessageType_DecredSignMessage,			DecredSignMessage_fields,			(void (*)(void *))fsm_msgDecredSignMessage},
+	{'n', 'i', MessageType_MessageType_DecredVerifyMessage,		DecredVerifyMessage_fields,		(void (*)(void *))fsm_msgDecredVerifyMessage},
 
 	// out messages
 	{'n', 'o', MessageType_MessageType_Success,				Success_fields,				0},

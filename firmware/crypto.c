@@ -130,24 +130,6 @@ int cryptoMessageSign(const CoinType *coin, HDNode *node, const uint8_t *message
 	return result;
 }
 
-int cryptoDecredMessageSign(const CoinType *coin, HDNode *node, const uint8_t *message, size_t message_len, uint8_t *signature)
-{
-	state256 ctx;
-	blake256_init(&ctx);
-	blake256_update(&ctx, (const uint8_t *)coin->signed_message_header, strlen(coin->signed_message_header));
-	uint8_t varint[5];
-	uint32_t l = ser_length(message_len, varint);
-	blake256_update(&ctx, varint, l);
-	blake256_update(&ctx, message, message_len);
-	uint8_t hash[32];
-	blake256_final(&ctx, hash);
-	uint8_t pby;
-	int result = hdnode_sign_digest(node, hash, signature + 1, &pby, NULL);
-	if (result == 0) {
-		signature[0] = 27 + pby + 4;
-	}
-	return result;
-}
 
 int cryptoMessageVerify(const CoinType *coin, const uint8_t *message, size_t message_len, uint32_t address_type, const uint8_t *address_raw, const uint8_t *signature)
 {

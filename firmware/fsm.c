@@ -437,7 +437,7 @@ void fsm_msgDecredGetAddress(DecredGetAddress *msg)
 	}
 	hdnode_fill_public_key(node);
 
-	if(!decred_hdnode_get_address(node->public_key, 1855, resp->address, 65)){
+	if(!decred_hdnode_get_address(node, DECRED_ADDRESS_TYPE_P2PKH, resp->address, 65)){
 		fsm_sendFailure(FailureType_Failure_ActionCancelled, "Can't encode address");
 	}
 
@@ -455,6 +455,93 @@ void fsm_msgDecredGetAddress(DecredGetAddress *msg)
 	layoutHome();
 }
 
+
+void fsm_msgDecredSignMessage(DecredSignMessage *msg)
+{
+	RESP_INIT(MessageSignature);
+
+	CHECK_INITIALIZED
+
+	layoutSignMessage(msg->message.bytes, msg->message.size);
+	if (!protectButton(ButtonRequestType_ButtonRequest_ProtectCall, false)) {
+		fsm_sendFailure(FailureType_Failure_ActionCancelled, "Sign message cancelled");
+		layoutHome();
+		return;
+	}
+
+	CHECK_PIN
+
+	const CoinType *coin = fsm_getCoin(true, "Decred");
+	if (!coin) return;
+	HDNode *node = fsm_getDerivedNode(SECP256K1_NAME, msg->address_n, msg->address_n_count);
+	if (!node) return;
+
+	layoutProgressSwipe("Signing", 0);
+	if(decred_hdnode_sign(node, msg->message.bytes, msg->message.size, resp->signature.bytes) == 0){
+		resp->has_address = true;
+		decred_hdnode_get_address(node, coin->address_type, resp->address, sizeof(resp->address));
+		resp->has_signature = true;
+		resp->signature.size = 65;
+		msg_write(MessageType_MessageType_MessageSignature, resp);
+	} else {
+		fsm_sendFailure(FailureType_Failure_Other, "Error signing message");
+	}
+	layoutHome();
+}
+
+
+void fsm_msgDecredVerifyMessage(DecredVerifyMessage *msg)
+{
+	CHECK_PARAM(msg->has_address, "No address provided");
+	CHECK_PARAM(msg->has_message, "No message provided");
+
+	const CoinType *coin = fsm_getCoin(true, "Decred");
+	if (!coin) return;
+
+	uint8_t addr_raw[MAX_ADDR_RAW_SIZE];
+	uint32_t address_type;
+	if (!decred_extract_address_type(msg->address, &address_type) || !decred_address_decode(msg->address, address_type, addr_raw)) {
+		fsm_sendFailure(FailureType_Failure_InvalidSignature, "Invalid address");
+		return;
+	}
+	layoutProgressSwipe("Verifying", 0);
+	if (msg->signature.size == 65 && decred_message_verify(msg->message.bytes, msg->message.size, address_type, addr_raw, msg->signature.bytes) == 0) {
+		layoutVerifyAddress(msg->address);
+		if (!protectButton(ButtonRequestType_ButtonRequest_Other, false)) {
+			fsm_sendFailure(FailureType_Failure_ActionCancelled, "Message verification cancelled");
+			layoutHome();
+			return;
+		}
+		layoutVerifyMessage(msg->message.bytes, msg->message.size);
+		if (!protectButton(ButtonRequestType_ButtonRequest_Other, false)) {
+			fsm_sendFailure(FailureType_Failure_ActionCancelled, "Message verification cancelled");
+			layoutHome();
+			return;
+		}
+		fsm_sendSuccess("Message verified");
+	} else {
+		fsm_sendFailure(FailureType_Failure_InvalidSignature, "Invalid signature");
+	}
+	layoutHome();
+}
+
+// https://godoc.org/github.com/decred/dcrd/txscript#example-SignTxOutput
+void fsm_msgDecredSignTx(DecredSignTx *msg)
+{
+	CHECK_INITIALIZED
+
+	CHECK_PARAM(msg->inputs_count > 0, "Transaction must have at least one input");
+	CHECK_PARAM(msg->outputs_count > 0, "Transaction must have at least one output");
+
+	CHECK_PIN
+
+	const CoinType *coin = fsm_getCoin(true, "Decred");
+	if (!coin) return;
+	const HDNode *node = fsm_getDerivedNode(SECP256K1_NAME, 0, 0);
+	if (!node) return;
+
+	signing_init(msg->inputs_count, msg->outputs_count, coin, node, msg->version, msg->lock_time);
+}
 #endif
 
 void fsm_msgResetDevice(ResetDevice *msg)
@@ -473,6 +560,8 @@ void fsm_msgResetDevice(ResetDevice *msg)
 		msg->has_u2f_counter ? msg->u2f_counter : 0
 	);
 }
+
+
 
 void fsm_msgSignTx(SignTx *msg)
 {

@@ -82,7 +82,10 @@ typedef enum _MessageType {
     MessageType_MessageType_DecredLoadDevice = 114,
     MessageType_MessageType_DecredGetAddress = 115,
     MessageType_MessageType_DecredAddress = 116,
-    MessageType_MessageType_DecredEntropyAck = 117
+    MessageType_MessageType_DecredEntropyAck = 117,
+    MessageType_MessageType_DecredSignMessage = 118,
+    MessageType_MessageType_DecredVerifyMessage = 119,
+    MessageType_MessageType_DecredSignTx = 120
 } MessageType;
 
 /* Struct definitions */
@@ -318,6 +321,45 @@ typedef struct _DecredLoadDevice {
     bool has_u2f_counter;
     uint32_t u2f_counter;
 } DecredLoadDevice;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[1024];
+} DecredSignMessage_message_t;
+
+typedef struct _DecredSignMessage {
+    size_t address_n_count;
+    uint32_t address_n[8];
+    DecredSignMessage_message_t message;
+} DecredSignMessage;
+
+typedef struct _DecredSignTx {
+    uint32_t outputs_count;
+    uint32_t inputs_count;
+    bool has_version;
+    uint32_t version;
+    bool has_lock_time;
+    uint32_t lock_time;
+} DecredSignTx;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[65];
+} DecredVerifyMessage_signature_t;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[1024];
+} DecredVerifyMessage_message_t;
+
+typedef struct _DecredVerifyMessage {
+    bool has_address;
+    char address[41];
+    bool has_signature;
+    DecredVerifyMessage_signature_t signature;
+    bool has_message;
+    DecredVerifyMessage_message_t message;
+} DecredVerifyMessage;
 
 typedef struct {
     size_t size;
@@ -857,6 +899,8 @@ extern const char GetAddress_coin_name_default[17];
 extern const InputScriptType GetAddress_script_type_default;
 extern const char LoadDevice_language_default[17];
 extern const char DecredLoadDevice_language_default[17];
+extern const uint32_t DecredSignTx_version_default;
+extern const uint32_t DecredSignTx_lock_time_default;
 extern const uint32_t ResetDevice_strength_default;
 extern const char ResetDevice_language_default[17];
 extern const char RecoveryDevice_language_default[17];
@@ -899,6 +943,9 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredGetAddress_init_default            {0, {0, 0, 0, 0, 0, 0, 0, 0}, false, 0}
 #define DecredAddress_init_default               {""}
 #define DecredEntropyAck_init_default            {false, {0, {0}}}
+#define DecredSignMessage_init_default           {0, {0, 0, 0, 0, 0, 0, 0, 0}, {0, {0}}}
+#define DecredVerifyMessage_init_default         {false, "", false, {0, {0}}, false, {0, {0}}}
+#define DecredSignTx_init_default                {0, 0, false, 1u, false, 0u}
 #define ResetDevice_init_default                 {false, 0, false, 256u, false, 0, false, 0, false, "english", false, "", false, 0}
 #define EntropyRequest_init_default              {0}
 #define EntropyAck_init_default                  {false, {0, {0}}}
@@ -967,6 +1014,9 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredGetAddress_init_zero               {0, {0, 0, 0, 0, 0, 0, 0, 0}, false, 0}
 #define DecredAddress_init_zero                  {""}
 #define DecredEntropyAck_init_zero               {false, {0, {0}}}
+#define DecredSignMessage_init_zero              {0, {0, 0, 0, 0, 0, 0, 0, 0}, {0, {0}}}
+#define DecredVerifyMessage_init_zero            {false, "", false, {0, {0}}, false, {0, {0}}}
+#define DecredSignTx_init_zero                   {0, 0, false, 0, false, 0}
 #define ResetDevice_init_zero                    {false, 0, false, 0, false, 0, false, 0, false, "", false, "", false, 0}
 #define EntropyRequest_init_zero                 {0}
 #define EntropyAck_init_zero                     {false, {0, {0}}}
@@ -1055,6 +1105,15 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredLoadDevice_language_tag            5
 #define DecredLoadDevice_label_tag               6
 #define DecredLoadDevice_u2f_counter_tag         7
+#define DecredSignMessage_address_n_tag          1
+#define DecredSignMessage_message_tag            2
+#define DecredSignTx_outputs_count_tag           1
+#define DecredSignTx_inputs_count_tag            2
+#define DecredSignTx_version_tag                 4
+#define DecredSignTx_lock_time_tag               5
+#define DecredVerifyMessage_address_tag          1
+#define DecredVerifyMessage_signature_tag        2
+#define DecredVerifyMessage_message_tag          3
 #define DecryptMessage_address_n_tag             1
 #define DecryptMessage_nonce_tag                 2
 #define DecryptMessage_message_tag               3
@@ -1219,6 +1278,9 @@ extern const pb_field_t DecredLoadDevice_fields[8];
 extern const pb_field_t DecredGetAddress_fields[3];
 extern const pb_field_t DecredAddress_fields[2];
 extern const pb_field_t DecredEntropyAck_fields[2];
+extern const pb_field_t DecredSignMessage_fields[3];
+extern const pb_field_t DecredVerifyMessage_fields[4];
+extern const pb_field_t DecredSignTx_fields[5];
 extern const pb_field_t ResetDevice_fields[8];
 extern const pb_field_t EntropyRequest_fields[1];
 extern const pb_field_t EntropyAck_fields[2];
@@ -1289,6 +1351,9 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 #define DecredGetAddress_size                    50
 #define DecredAddress_size                       62
 #define DecredEntropyAck_size                    131
+#define DecredSignMessage_size                   1075
+#define DecredVerifyMessage_size                 1137
+#define DecredSignTx_size                        24
 #define ResetDevice_size                         72
 #define EntropyRequest_size                      0
 #define EntropyAck_size                          131

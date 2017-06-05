@@ -65,6 +65,8 @@ void fsm_msgEthereumTxAck(EthereumTxAck *msg);
 void fsm_msgDecredLoadDevice(DecredLoadDevice *msg);
 void fsm_msgDecredGetAddress(DecredGetAddress *msg);
 void fsm_msgDecredEntropyAck(DecredEntropyAck *msg);
+void fsm_msgDecredSignMessage(DecredSignMessage *msg);
+void fsm_msgDecredVerifyMessage(DecredVerifyMessage *msg);
 #endif
 
 // debug message functions
