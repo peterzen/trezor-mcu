@@ -19,6 +19,8 @@ OBJS += signing.o
 OBJS += crypto.o
 OBJS += ethereum.o
 OBJS += ethereum_tokens.o
+OBJS += decred_signing.o
+OBJS += decred_transaction.o
 
 OBJS += debug.o
 

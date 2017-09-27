@@ -85,7 +85,9 @@ typedef enum _MessageType {
     MessageType_MessageType_DecredEntropyAck = 117,
     MessageType_MessageType_DecredSignMessage = 118,
     MessageType_MessageType_DecredVerifyMessage = 119,
-    MessageType_MessageType_DecredSignTx = 120
+    MessageType_MessageType_DecredSignTx = 120,
+    MessageType_MessageType_DecredTxAck = 121,
+    MessageType_MessageType_DecredTxRequest = 122
 } MessageType;
 
 /* Struct definitions */
@@ -341,6 +343,20 @@ typedef struct _DecredSignTx {
     bool has_lock_time;
     uint32_t lock_time;
 } DecredSignTx;
+
+typedef struct _DecredTxAck {
+    bool has_tx;
+    DecredTransactionType tx;
+} DecredTxAck;
+
+typedef struct _DecredTxRequest {
+    bool has_request_type;
+    RequestType request_type;
+    bool has_details;
+    TxRequestDetailsType details;
+    bool has_serialized;
+    TxRequestSerializedType serialized;
+} DecredTxRequest;
 
 typedef struct {
     size_t size;
@@ -946,6 +962,8 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredSignMessage_init_default           {0, {0, 0, 0, 0, 0, 0, 0, 0}, {0, {0}}}
 #define DecredVerifyMessage_init_default         {false, "", false, {0, {0}}, false, {0, {0}}}
 #define DecredSignTx_init_default                {0, 0, false, 1u, false, 0u}
+#define DecredTxRequest_init_default             {false, (RequestType)0, false, TxRequestDetailsType_init_default, false, TxRequestSerializedType_init_default}
+#define DecredTxAck_init_default                 {false, DecredTransactionType_init_default}
 #define ResetDevice_init_default                 {false, 0, false, 256u, false, 0, false, 0, false, "english", false, "", false, 0}
 #define EntropyRequest_init_default              {0}
 #define EntropyAck_init_default                  {false, {0, {0}}}
@@ -1017,6 +1035,8 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredSignMessage_init_zero              {0, {0, 0, 0, 0, 0, 0, 0, 0}, {0, {0}}}
 #define DecredVerifyMessage_init_zero            {false, "", false, {0, {0}}, false, {0, {0}}}
 #define DecredSignTx_init_zero                   {0, 0, false, 0, false, 0}
+#define DecredTxRequest_init_zero                {false, (RequestType)0, false, TxRequestDetailsType_init_zero, false, TxRequestSerializedType_init_zero}
+#define DecredTxAck_init_zero                    {false, DecredTransactionType_init_zero}
 #define ResetDevice_init_zero                    {false, 0, false, 0, false, 0, false, 0, false, "", false, "", false, 0}
 #define EntropyRequest_init_zero                 {0}
 #define EntropyAck_init_zero                     {false, {0, {0}}}
@@ -1111,6 +1131,10 @@ extern const uint32_t SignTx_lock_time_default;
 #define DecredSignTx_inputs_count_tag            2
 #define DecredSignTx_version_tag                 4
 #define DecredSignTx_lock_time_tag               5
+#define DecredTxAck_tx_tag                       1
+#define DecredTxRequest_request_type_tag         1
+#define DecredTxRequest_details_tag              2
+#define DecredTxRequest_serialized_tag           3
 #define DecredVerifyMessage_address_tag          1
 #define DecredVerifyMessage_signature_tag        2
 #define DecredVerifyMessage_message_tag          3
@@ -1281,6 +1305,8 @@ extern const pb_field_t DecredEntropyAck_fields[2];
 extern const pb_field_t DecredSignMessage_fields[3];
 extern const pb_field_t DecredVerifyMessage_fields[4];
 extern const pb_field_t DecredSignTx_fields[5];
+extern const pb_field_t DecredTxRequest_fields[4];
+extern const pb_field_t DecredTxAck_fields[2];
 extern const pb_field_t ResetDevice_fields[8];
 extern const pb_field_t EntropyRequest_fields[1];
 extern const pb_field_t EntropyAck_fields[2];
@@ -1354,6 +1380,8 @@ extern const pb_field_t DebugLinkFlashErase_fields[2];
 #define DecredSignMessage_size                   1075
 #define DecredVerifyMessage_size                 1137
 #define DecredSignTx_size                        24
+#define DecredTxRequest_size                     (18 + TxRequestDetailsType_size + TxRequestSerializedType_size)
+#define DecredTxAck_size                         (6 + DecredTransactionType_size)
 #define ResetDevice_size                         72
 #define EntropyRequest_size                      0
 #define EntropyAck_size                          131

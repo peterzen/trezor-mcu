@@ -105,6 +105,23 @@ typedef struct _CoinType {
 typedef struct {
     size_t size;
     uint8_t bytes[32];
+} DecredOutPointType_hash_t;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[1];
+} DecredOutPointType_tree_t;
+
+typedef struct _DecredOutPointType {
+    DecredOutPointType_hash_t hash;
+    uint64_t index;
+    bool has_tree;
+    DecredOutPointType_tree_t tree;
+} DecredOutPointType;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[32];
 } HDNodeType_chain_code_t;
 
 typedef struct {
@@ -210,6 +227,68 @@ typedef struct _MultisigRedeemScriptType {
 
 typedef struct {
     size_t size;
+    uint8_t bytes[255];
+} DecredTxInType_signature_script_t;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[32];
+} DecredTxInType_prev_hash_t;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[1650];
+} DecredTxInType_script_sig_t;
+
+typedef struct _DecredTxInType {
+    DecredOutPointType previous_out_point;
+    uint32_t sequence;
+    int64_t value_in;
+    uint32_t block_height;
+    uint32_t block_index;
+    DecredTxInType_signature_script_t signature_script;
+    DecredTxInType_prev_hash_t prev_hash;
+    bool has_script_type;
+    InputScriptType script_type;
+    bool has_multisig;
+    MultisigRedeemScriptType multisig;
+    bool has_amount;
+    uint64_t amount;
+    size_t address_n_count;
+    uint32_t address_n[8];
+    uint32_t prev_index;
+    bool has_script_sig;
+    DecredTxInType_script_sig_t script_sig;
+} DecredTxInType;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[255];
+} DecredTxOutType_pk_script_t;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[80];
+} DecredTxOutType_op_return_data_t;
+
+typedef struct _DecredTxOutType {
+    int64_t value;
+    uint32_t version;
+    DecredTxOutType_pk_script_t pk_script;
+    bool has_address;
+    char address[54];
+    size_t address_n_count;
+    uint32_t address_n[8];
+    uint64_t amount;
+    OutputScriptType script_type;
+    bool has_multisig;
+    MultisigRedeemScriptType multisig;
+    bool has_op_return_data;
+    DecredTxOutType_op_return_data_t op_return_data;
+} DecredTxOutType;
+
+typedef struct {
+    size_t size;
     uint8_t bytes[32];
 } TxInputType_prev_hash_t;
 
@@ -256,6 +335,35 @@ typedef struct _TxOutputType {
 typedef struct {
     size_t size;
     uint8_t bytes[1024];
+} DecredTransactionType_extra_data_t;
+
+typedef struct _DecredTransactionType {
+    pb_callback_t cached_hash;
+    bool has_version;
+    int32_t version;
+    size_t inputs_count;
+    DecredTxInType inputs[1];
+    size_t bin_outputs_count;
+    TxOutputBinType bin_outputs[1];
+    size_t outputs_count;
+    DecredTxOutType outputs[1];
+    bool has_lock_time;
+    uint32_t lock_time;
+    bool has_expiry;
+    uint32_t expiry;
+    bool has_inputs_cnt;
+    uint32_t inputs_cnt;
+    bool has_outputs_cnt;
+    uint32_t outputs_cnt;
+    bool has_extra_data;
+    DecredTransactionType_extra_data_t extra_data;
+    bool has_extra_data_len;
+    uint32_t extra_data_len;
+} DecredTransactionType;
+
+typedef struct {
+    size_t size;
+    uint8_t bytes[1024];
 } TransactionType_extra_data_t;
 
 typedef struct _TransactionType {
@@ -293,6 +401,8 @@ extern const uint32_t CoinType_xprv_magic_default;
 extern const uint32_t TxInputType_sequence_default;
 extern const InputScriptType TxInputType_script_type_default;
 extern const uint32_t IdentityType_index_default;
+extern const uint32_t DecredTxInType_sequence_default;
+extern const InputScriptType DecredTxInType_script_type_default;
 
 /* Initializer values for message structs */
 #define HDNodeType_init_default                  {0, 0, 0, {0, {0}}, false, {0, {0}}, false, {0, {0}}}
@@ -306,6 +416,10 @@ extern const uint32_t IdentityType_index_default;
 #define TxRequestDetailsType_init_default        {false, 0, false, {0, {0}}, false, 0, false, 0}
 #define TxRequestSerializedType_init_default     {false, 0, false, {0, {0}}, false, {0, {0}}}
 #define IdentityType_init_default                {false, "", false, "", false, "", false, "", false, "", false, 0u}
+#define DecredOutPointType_init_default          {{0, {0}}, 0, false, {0, {0}}}
+#define DecredTxInType_init_default              {DecredOutPointType_init_default, 4294967295u, 0, 0, 0, {0, {0}}, {0, {0}}, false, InputScriptType_SPENDADDRESS, false, MultisigRedeemScriptType_init_default, false, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, false, {0, {0}}}
+#define DecredTxOutType_init_default             {0, 0, {0, {0}}, false, "", 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, (OutputScriptType)0, false, MultisigRedeemScriptType_init_default, false, {0, {0}}}
+#define DecredTransactionType_init_default       {{{NULL}, NULL}, false, 0, 0, {DecredTxInType_init_default}, 0, {TxOutputBinType_init_default}, 0, {DecredTxOutType_init_default}, false, 0, false, 0, false, 0, false, 0, false, {0, {0}}, false, 0}
 #define HDNodeType_init_zero                     {0, 0, 0, {0, {0}}, false, {0, {0}}, false, {0, {0}}}
 #define HDNodePathType_init_zero                 {HDNodeType_init_zero, 0, {0, 0, 0, 0, 0, 0, 0, 0}}
 #define CoinType_init_zero                       {false, "", false, "", false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, 0}
@@ -317,6 +431,10 @@ extern const uint32_t IdentityType_index_default;
 #define TxRequestDetailsType_init_zero           {false, 0, false, {0, {0}}, false, 0, false, 0}
 #define TxRequestSerializedType_init_zero        {false, 0, false, {0, {0}}, false, {0, {0}}}
 #define IdentityType_init_zero                   {false, "", false, "", false, "", false, "", false, "", false, 0}
+#define DecredOutPointType_init_zero             {{0, {0}}, 0, false, {0, {0}}}
+#define DecredTxInType_init_zero                 {DecredOutPointType_init_zero, 0, 0, 0, 0, {0, {0}}, {0, {0}}, false, (InputScriptType)0, false, MultisigRedeemScriptType_init_zero, false, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, false, {0, {0}}}
+#define DecredTxOutType_init_zero                {0, 0, {0, {0}}, false, "", 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, (OutputScriptType)0, false, MultisigRedeemScriptType_init_zero, false, {0, {0}}}
+#define DecredTransactionType_init_zero          {{{NULL}, NULL}, false, 0, 0, {DecredTxInType_init_zero}, 0, {TxOutputBinType_init_zero}, 0, {DecredTxOutType_init_zero}, false, 0, false, 0, false, 0, false, 0, false, {0, {0}}, false, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define CoinType_coin_name_tag                   1
@@ -328,6 +446,9 @@ extern const uint32_t IdentityType_index_default;
 #define CoinType_xpub_magic_tag                  9
 #define CoinType_xprv_magic_tag                  10
 #define CoinType_segwit_tag                      11
+#define DecredOutPointType_hash_tag              1
+#define DecredOutPointType_index_tag             2
+#define DecredOutPointType_tree_tag              3
 #define HDNodeType_depth_tag                     1
 #define HDNodeType_fingerprint_tag               2
 #define HDNodeType_child_num_tag                 3
@@ -354,6 +475,28 @@ extern const uint32_t IdentityType_index_default;
 #define MultisigRedeemScriptType_pubkeys_tag     1
 #define MultisigRedeemScriptType_signatures_tag  2
 #define MultisigRedeemScriptType_m_tag           3
+#define DecredTxInType_previous_out_point_tag    1
+#define DecredTxInType_sequence_tag              2
+#define DecredTxInType_value_in_tag              3
+#define DecredTxInType_block_height_tag          4
+#define DecredTxInType_block_index_tag           5
+#define DecredTxInType_signature_script_tag      6
+#define DecredTxInType_prev_hash_tag             7
+#define DecredTxInType_script_type_tag           8
+#define DecredTxInType_multisig_tag              9
+#define DecredTxInType_amount_tag                10
+#define DecredTxInType_address_n_tag             11
+#define DecredTxInType_prev_index_tag            12
+#define DecredTxInType_script_sig_tag            13
+#define DecredTxOutType_value_tag                1
+#define DecredTxOutType_version_tag              2
+#define DecredTxOutType_pk_script_tag            3
+#define DecredTxOutType_address_tag              4
+#define DecredTxOutType_address_n_tag            5
+#define DecredTxOutType_amount_tag               6
+#define DecredTxOutType_script_type_tag          7
+#define DecredTxOutType_multisig_tag             8
+#define DecredTxOutType_op_return_data_tag       9
 #define TxInputType_address_n_tag                1
 #define TxInputType_prev_hash_tag                2
 #define TxInputType_prev_index_tag               3
@@ -368,6 +511,17 @@ extern const uint32_t IdentityType_index_default;
 #define TxOutputType_script_type_tag             4
 #define TxOutputType_multisig_tag                5
 #define TxOutputType_op_return_data_tag          6
+#define DecredTransactionType_cached_hash_tag    1
+#define DecredTransactionType_version_tag        2
+#define DecredTransactionType_inputs_tag         3
+#define DecredTransactionType_bin_outputs_tag    4
+#define DecredTransactionType_outputs_tag        5
+#define DecredTransactionType_lock_time_tag      6
+#define DecredTransactionType_expiry_tag         7
+#define DecredTransactionType_inputs_cnt_tag     8
+#define DecredTransactionType_outputs_cnt_tag    9
+#define DecredTransactionType_extra_data_tag     10
+#define DecredTransactionType_extra_data_len_tag 11
 #define TransactionType_version_tag              1
 #define TransactionType_inputs_tag               2
 #define TransactionType_bin_outputs_tag          3
@@ -394,6 +548,10 @@ extern const pb_field_t TransactionType_fields[10];
 extern const pb_field_t TxRequestDetailsType_fields[5];
 extern const pb_field_t TxRequestSerializedType_fields[4];
 extern const pb_field_t IdentityType_fields[7];
+extern const pb_field_t DecredOutPointType_fields[4];
+extern const pb_field_t DecredTxInType_fields[14];
+extern const pb_field_t DecredTxOutType_fields[10];
+extern const pb_field_t DecredTransactionType_fields[12];
 
 /* Maximum encoded size of messages (where known) */
 #define HDNodeType_size                          121
@@ -407,6 +565,9 @@ extern const pb_field_t IdentityType_fields[7];
 #define TxRequestDetailsType_size                52
 #define TxRequestSerializedType_size             2132
 #define IdentityType_size                        416
+#define DecredOutPointType_size                  48
+#define DecredTxInType_size                      5839
+#define DecredTxOutType_size                     4222
 
 #ifdef __cplusplus
 } /* extern "C" */

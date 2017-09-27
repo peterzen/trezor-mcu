@@ -74,4 +74,6 @@ uint32_t transactionEstimateSize(uint32_t inputs, uint32_t outputs);
 
 uint32_t transactionEstimateSizeKb(uint32_t inputs, uint32_t outputs);
 
+uint32_t op_push(uint32_t i, uint8_t *out);
+
 #endif

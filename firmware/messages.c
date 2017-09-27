@@ -79,6 +79,8 @@ static const struct MessagesMap_t MessagesMap[] = {
 	{'n', 'i', MessageType_MessageType_DecredEntropyAck,			DecredEntropyAck_fields,			(void (*)(void *))fsm_msgDecredEntropyAck},
 	{'n', 'i', MessageType_MessageType_DecredSignMessage,			DecredSignMessage_fields,			(void (*)(void *))fsm_msgDecredSignMessage},
 	{'n', 'i', MessageType_MessageType_DecredVerifyMessage,		DecredVerifyMessage_fields,		(void (*)(void *))fsm_msgDecredVerifyMessage},
+	{'n', 'i', MessageType_MessageType_DecredSignTx,				DecredSignTx_fields,				(void (*)(void *))fsm_msgDecredSignTx},
+	{'n', 'i', MessageType_MessageType_DecredTxAck,				DecredTxAck_fields,				(void (*)(void *))fsm_msgDecredTxAck},
 
 	// out messages
 	{'n', 'o', MessageType_MessageType_Success,				Success_fields,				0},
@@ -105,6 +107,7 @@ static const struct MessagesMap_t MessagesMap[] = {
 	{'n', 'o', MessageType_MessageType_EthereumAddress,		EthereumAddress_fields,		0},
 	{'n', 'o', MessageType_MessageType_EthereumTxRequest,		EthereumTxRequest_fields,		0},
 	{'n', 'o', MessageType_MessageType_DecredAddress,				DecredAddress_fields,				0},
+	{'n', 'o', MessageType_MessageType_DecredTxRequest,			DecredTxRequest_fields,			0},
 
 #if DEBUG_LINK
 	// debug in messages

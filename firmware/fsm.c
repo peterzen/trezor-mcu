@@ -51,6 +51,7 @@
 #include <libopencm3/stm32/flash.h>
 #include "ethereum.h"
 #include "decred.h"
+#include "decred_signing.h"
 // message methods
 
 static uint8_t msg_resp[MSG_OUT_SIZE] __attribute__ ((aligned));
@@ -540,8 +541,17 @@ void fsm_msgDecredSignTx(DecredSignTx *msg)
 	const HDNode *node = fsm_getDerivedNode(SECP256K1_NAME, 0, 0);
 	if (!node) return;
 
-	signing_init(msg->inputs_count, msg->outputs_count, coin, node, msg->version, msg->lock_time);
+	decred_signing_init(msg->inputs_count, msg->outputs_count, coin, node, msg->version, msg->lock_time);
 }
+
+void fsm_msgDecredTxAck(DecredTxAck *msg)
+{
+	CHECK_PARAM(msg->has_tx, "No transaction provided");
+
+	decred_signing_txack(&(msg->tx));
+}
+
+
 #endif
 
 void fsm_msgResetDevice(ResetDevice *msg)

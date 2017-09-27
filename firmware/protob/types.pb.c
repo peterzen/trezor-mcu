@@ -10,6 +10,8 @@ const uint32_t CoinType_xprv_magic_default = 76066276u;
 const uint32_t TxInputType_sequence_default = 4294967295u;
 const InputScriptType TxInputType_script_type_default = InputScriptType_SPENDADDRESS;
 const uint32_t IdentityType_index_default = 0u;
+const uint32_t DecredTxInType_sequence_default = 4294967295u;
+const InputScriptType DecredTxInType_script_type_default = InputScriptType_SPENDADDRESS;
 
 
 const pb_field_t HDNodeType_fields[7] = {
@@ -114,6 +116,58 @@ const pb_field_t IdentityType_fields[7] = {
     PB_LAST_FIELD
 };
 
+const pb_field_t DecredOutPointType_fields[4] = {
+    PB_FIELD2(  1, BYTES   , REQUIRED, STATIC  , FIRST, DecredOutPointType, hash, hash, 0),
+    PB_FIELD2(  2, UINT64  , REQUIRED, STATIC  , OTHER, DecredOutPointType, index, hash, 0),
+    PB_FIELD2(  3, BYTES   , OPTIONAL, STATIC  , OTHER, DecredOutPointType, tree, index, 0),
+    PB_LAST_FIELD
+};
+
+const pb_field_t DecredTxInType_fields[14] = {
+    PB_FIELD2(  1, MESSAGE , REQUIRED, STATIC  , FIRST, DecredTxInType, previous_out_point, previous_out_point, &DecredOutPointType_fields),
+    PB_FIELD2(  2, UINT32  , REQUIRED, STATIC  , OTHER, DecredTxInType, sequence, previous_out_point, &DecredTxInType_sequence_default),
+    PB_FIELD2(  3, INT64   , REQUIRED, STATIC  , OTHER, DecredTxInType, value_in, sequence, 0),
+    PB_FIELD2(  4, UINT32  , REQUIRED, STATIC  , OTHER, DecredTxInType, block_height, value_in, 0),
+    PB_FIELD2(  5, UINT32  , REQUIRED, STATIC  , OTHER, DecredTxInType, block_index, block_height, 0),
+    PB_FIELD2(  6, BYTES   , REQUIRED, STATIC  , OTHER, DecredTxInType, signature_script, block_index, 0),
+    PB_FIELD2(  7, BYTES   , REQUIRED, STATIC  , OTHER, DecredTxInType, prev_hash, signature_script, 0),
+    PB_FIELD2(  8, ENUM    , OPTIONAL, STATIC  , OTHER, DecredTxInType, script_type, prev_hash, &DecredTxInType_script_type_default),
+    PB_FIELD2(  9, MESSAGE , OPTIONAL, STATIC  , OTHER, DecredTxInType, multisig, script_type, &MultisigRedeemScriptType_fields),
+    PB_FIELD2( 10, UINT64  , OPTIONAL, STATIC  , OTHER, DecredTxInType, amount, multisig, 0),
+    PB_FIELD2( 11, UINT32  , REPEATED, STATIC  , OTHER, DecredTxInType, address_n, amount, 0),
+    PB_FIELD2( 12, UINT32  , REQUIRED, STATIC  , OTHER, DecredTxInType, prev_index, address_n, 0),
+    PB_FIELD2( 13, BYTES   , OPTIONAL, STATIC  , OTHER, DecredTxInType, script_sig, prev_index, 0),
+    PB_LAST_FIELD
+};
+
+const pb_field_t DecredTxOutType_fields[10] = {
+    PB_FIELD2(  1, INT64   , REQUIRED, STATIC  , FIRST, DecredTxOutType, value, value, 0),
+    PB_FIELD2(  2, UINT32  , REQUIRED, STATIC  , OTHER, DecredTxOutType, version, value, 0),
+    PB_FIELD2(  3, BYTES   , REQUIRED, STATIC  , OTHER, DecredTxOutType, pk_script, version, 0),
+    PB_FIELD2(  4, STRING  , OPTIONAL, STATIC  , OTHER, DecredTxOutType, address, pk_script, 0),
+    PB_FIELD2(  5, UINT32  , REPEATED, STATIC  , OTHER, DecredTxOutType, address_n, address, 0),
+    PB_FIELD2(  6, UINT64  , REQUIRED, STATIC  , OTHER, DecredTxOutType, amount, address_n, 0),
+    PB_FIELD2(  7, ENUM    , REQUIRED, STATIC  , OTHER, DecredTxOutType, script_type, amount, 0),
+    PB_FIELD2(  8, MESSAGE , OPTIONAL, STATIC  , OTHER, DecredTxOutType, multisig, script_type, &MultisigRedeemScriptType_fields),
+    PB_FIELD2(  9, BYTES   , OPTIONAL, STATIC  , OTHER, DecredTxOutType, op_return_data, multisig, 0),
+    PB_LAST_FIELD
+};
+
+const pb_field_t DecredTransactionType_fields[12] = {
+    PB_FIELD2(  1, BYTES   , REQUIRED, CALLBACK, FIRST, DecredTransactionType, cached_hash, cached_hash, 0),
+    PB_FIELD2(  2, INT32   , OPTIONAL, STATIC  , OTHER, DecredTransactionType, version, cached_hash, 0),
+    PB_FIELD2(  3, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, inputs, version, &DecredTxInType_fields),
+    PB_FIELD2(  4, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, bin_outputs, inputs, &TxOutputBinType_fields),
+    PB_FIELD2(  5, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, outputs, bin_outputs, &DecredTxOutType_fields),
+    PB_FIELD2(  6, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, lock_time, outputs, 0),
+    PB_FIELD2(  7, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, expiry, lock_time, 0),
+    PB_FIELD2(  8, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, inputs_cnt, expiry, 0),
+    PB_FIELD2(  9, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, outputs_cnt, inputs_cnt, 0),
+    PB_FIELD2( 10, BYTES   , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data, outputs_cnt, 0),
+    PB_FIELD2( 11, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data_len, extra_data, 0),
+    PB_LAST_FIELD
+};
+
 typedef struct {
     bool wire_in;
 } wire_in_struct;
@@ -176,7 +230,7 @@ const pb_extension_type_t wire_debug_out = {
  * numbers or field sizes that are larger than what can fit in 8 or 16 bit
  * field descriptors.
  */
-STATIC_ASSERT((pb_membersize(HDNodePathType, node) < 65536 && pb_membersize(MultisigRedeemScriptType, pubkeys[0]) < 65536 && pb_membersize(TxInputType, multisig) < 65536 && pb_membersize(TxOutputType, multisig) < 65536 && pb_membersize(TransactionType, inputs[0]) < 65536 && pb_membersize(TransactionType, bin_outputs[0]) < 65536 && pb_membersize(TransactionType, outputs[0]) < 65536), YOU_MUST_DEFINE_PB_FIELD_32BIT_FOR_MESSAGES_HDNodeType_HDNodePathType_CoinType_MultisigRedeemScriptType_TxInputType_TxOutputType_TxOutputBinType_TransactionType_TxRequestDetailsType_TxRequestSerializedType_IdentityType)
+STATIC_ASSERT((pb_membersize(HDNodePathType, node) < 65536 && pb_membersize(MultisigRedeemScriptType, pubkeys[0]) < 65536 && pb_membersize(TxInputType, multisig) < 65536 && pb_membersize(TxOutputType, multisig) < 65536 && pb_membersize(TransactionType, inputs[0]) < 65536 && pb_membersize(TransactionType, bin_outputs[0]) < 65536 && pb_membersize(TransactionType, outputs[0]) < 65536 && pb_membersize(DecredTxInType, previous_out_point) < 65536 && pb_membersize(DecredTxInType, multisig) < 65536 && pb_membersize(DecredTxOutType, multisig) < 65536 && pb_membersize(DecredTransactionType, inputs[0]) < 65536 && pb_membersize(DecredTransactionType, bin_outputs[0]) < 65536 && pb_membersize(DecredTransactionType, outputs[0]) < 65536), YOU_MUST_DEFINE_PB_FIELD_32BIT_FOR_MESSAGES_HDNodeType_HDNodePathType_CoinType_MultisigRedeemScriptType_TxInputType_TxOutputType_TxOutputBinType_TransactionType_TxRequestDetailsType_TxRequestSerializedType_IdentityType_DecredOutPointType_DecredTxInType_DecredTxOutType_DecredTransactionType)
 #endif
 
 #if !defined(PB_FIELD_16BIT) && !defined(PB_FIELD_32BIT)

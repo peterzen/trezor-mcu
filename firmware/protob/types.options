@@ -36,3 +36,22 @@ IdentityType.user			max_size:64
 IdentityType.host			max_size:64
 IdentityType.port			max_size:6
 IdentityType.path			max_size:256
+
+DecredOutPointType.hash   max_size:32
+DecredOutPointType.tree   max_size:1
+
+DecredTxInType.signature_script   max_size:255
+DecredTxInType.prev_hash			max_size:32
+DecredTxInType.address_n			max_count:8
+DecredTxInType.prev_hash			max_size:32
+DecredTxInType.script_sig			max_size:1650
+
+DecredTxOutType.pk_script         max_size:255
+DecredTxOutType.address			max_size:54
+DecredTxOutType.address_n			max_count:8
+DecredTxOutType.op_return_data		max_size:80
+
+DecredTransactionType.inputs			max_count:1
+DecredTransactionType.bin_outputs		max_count:1
+DecredTransactionType.outputs			max_count:1
+DecredTransactionType.extra_data		max_size:1024

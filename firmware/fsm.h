@@ -67,6 +67,9 @@ void fsm_msgDecredGetAddress(DecredGetAddress *msg);
 void fsm_msgDecredEntropyAck(DecredEntropyAck *msg);
 void fsm_msgDecredSignMessage(DecredSignMessage *msg);
 void fsm_msgDecredVerifyMessage(DecredVerifyMessage *msg);
+void fsm_msgDecredSignTx(DecredSignTx *msg);
+void fsm_msgDecredTxAck(DecredTxAck *msg);
+
 #endif
 
 // debug message functions
