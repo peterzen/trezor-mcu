@@ -55,3 +55,4 @@ DecredTransactionType.inputs			max_count:1
 DecredTransactionType.bin_outputs		max_count:1
 DecredTransactionType.outputs			max_count:1
 DecredTransactionType.extra_data		max_size:1024
+DecredTransactionType.cached_hash		max_size:32

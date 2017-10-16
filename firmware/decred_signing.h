@@ -34,5 +34,16 @@ bool decred_check_change_bip32_path(const DecredTxOutType *toutput);
 void decred_extract_input_bip32_path(const DecredTxInType *tinput);
 bool decred_signing_sign_segwit_input(DecredTxInType *txinput);
 
+// Hash type bits from the end of a signature.
+#define SIGHASH_OLD          0x0
+#define SIGHASH_ALL          0x1
+#define SIGHASH_NONE         0x2
+#define SIGHASH_SINGLE       0x3
+#define SIGHASH_ALLVALUE     0x4
+#define SIGHASH_ANYONECANPAY 0x80
+
+// sigHashMask defines the number of bits of the hash type which is used
+// to identify which outputs are signed.
+#define SIGHASHMASK = 0x1f
 
 #endif

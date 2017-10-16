@@ -154,17 +154,17 @@ const pb_field_t DecredTxOutType_fields[10] = {
 };
 
 const pb_field_t DecredTransactionType_fields[12] = {
-    PB_FIELD2(  1, BYTES   , REQUIRED, CALLBACK, FIRST, DecredTransactionType, cached_hash, cached_hash, 0),
-    PB_FIELD2(  2, INT32   , OPTIONAL, STATIC  , OTHER, DecredTransactionType, version, cached_hash, 0),
-    PB_FIELD2(  3, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, inputs, version, &DecredTxInType_fields),
-    PB_FIELD2(  4, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, bin_outputs, inputs, &TxOutputBinType_fields),
-    PB_FIELD2(  5, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, outputs, bin_outputs, &DecredTxOutType_fields),
-    PB_FIELD2(  6, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, lock_time, outputs, 0),
-    PB_FIELD2(  7, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, expiry, lock_time, 0),
-    PB_FIELD2(  8, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, inputs_cnt, expiry, 0),
-    PB_FIELD2(  9, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, outputs_cnt, inputs_cnt, 0),
-    PB_FIELD2( 10, BYTES   , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data, outputs_cnt, 0),
-    PB_FIELD2( 11, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data_len, extra_data, 0),
+    PB_FIELD2(  1, INT32   , OPTIONAL, STATIC  , FIRST, DecredTransactionType, version, version, 0),
+    PB_FIELD2(  2, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, inputs, version, &DecredTxInType_fields),
+    PB_FIELD2(  3, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, bin_outputs, inputs, &TxOutputBinType_fields),
+    PB_FIELD2(  4, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, lock_time, bin_outputs, 0),
+    PB_FIELD2(  5, MESSAGE , REPEATED, STATIC  , OTHER, DecredTransactionType, outputs, lock_time, &DecredTxOutType_fields),
+    PB_FIELD2(  6, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, inputs_cnt, outputs, 0),
+    PB_FIELD2(  7, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, outputs_cnt, inputs_cnt, 0),
+    PB_FIELD2(  8, BYTES   , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data, outputs_cnt, 0),
+    PB_FIELD2(  9, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, extra_data_len, extra_data, 0),
+    PB_FIELD2( 10, BYTES   , REQUIRED, STATIC  , OTHER, DecredTransactionType, cached_hash, extra_data_len, 0),
+    PB_FIELD2( 11, UINT32  , OPTIONAL, STATIC  , OTHER, DecredTransactionType, expiry, cached_hash, 0),
     PB_LAST_FIELD
 };
 

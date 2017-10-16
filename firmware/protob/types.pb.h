@@ -337,20 +337,22 @@ typedef struct {
     uint8_t bytes[1024];
 } DecredTransactionType_extra_data_t;
 
+typedef struct {
+    size_t size;
+    uint8_t bytes[32];
+} DecredTransactionType_cached_hash_t;
+
 typedef struct _DecredTransactionType {
-    pb_callback_t cached_hash;
     bool has_version;
     int32_t version;
     size_t inputs_count;
     DecredTxInType inputs[1];
     size_t bin_outputs_count;
     TxOutputBinType bin_outputs[1];
-    size_t outputs_count;
-    DecredTxOutType outputs[1];
     bool has_lock_time;
     uint32_t lock_time;
-    bool has_expiry;
-    uint32_t expiry;
+    size_t outputs_count;
+    DecredTxOutType outputs[1];
     bool has_inputs_cnt;
     uint32_t inputs_cnt;
     bool has_outputs_cnt;
@@ -359,6 +361,9 @@ typedef struct _DecredTransactionType {
     DecredTransactionType_extra_data_t extra_data;
     bool has_extra_data_len;
     uint32_t extra_data_len;
+    DecredTransactionType_cached_hash_t cached_hash;
+    bool has_expiry;
+    uint32_t expiry;
 } DecredTransactionType;
 
 typedef struct {
@@ -419,7 +424,7 @@ extern const InputScriptType DecredTxInType_script_type_default;
 #define DecredOutPointType_init_default          {{0, {0}}, 0, false, {0, {0}}}
 #define DecredTxInType_init_default              {DecredOutPointType_init_default, 4294967295u, 0, 0, 0, {0, {0}}, {0, {0}}, false, InputScriptType_SPENDADDRESS, false, MultisigRedeemScriptType_init_default, false, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, false, {0, {0}}}
 #define DecredTxOutType_init_default             {0, 0, {0, {0}}, false, "", 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, (OutputScriptType)0, false, MultisigRedeemScriptType_init_default, false, {0, {0}}}
-#define DecredTransactionType_init_default       {{{NULL}, NULL}, false, 0, 0, {DecredTxInType_init_default}, 0, {TxOutputBinType_init_default}, 0, {DecredTxOutType_init_default}, false, 0, false, 0, false, 0, false, 0, false, {0, {0}}, false, 0}
+#define DecredTransactionType_init_default       {false, 0, 0, {DecredTxInType_init_default}, 0, {TxOutputBinType_init_default}, false, 0, 0, {DecredTxOutType_init_default}, false, 0, false, 0, false, {0, {0}}, false, 0, {0, {0}}, false, 0}
 #define HDNodeType_init_zero                     {0, 0, 0, {0, {0}}, false, {0, {0}}, false, {0, {0}}}
 #define HDNodePathType_init_zero                 {HDNodeType_init_zero, 0, {0, 0, 0, 0, 0, 0, 0, 0}}
 #define CoinType_init_zero                       {false, "", false, "", false, 0, false, 0, false, 0, false, "", false, 0, false, 0, false, 0}
@@ -434,7 +439,7 @@ extern const InputScriptType DecredTxInType_script_type_default;
 #define DecredOutPointType_init_zero             {{0, {0}}, 0, false, {0, {0}}}
 #define DecredTxInType_init_zero                 {DecredOutPointType_init_zero, 0, 0, 0, 0, {0, {0}}, {0, {0}}, false, (InputScriptType)0, false, MultisigRedeemScriptType_init_zero, false, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, false, {0, {0}}}
 #define DecredTxOutType_init_zero                {0, 0, {0, {0}}, false, "", 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0, (OutputScriptType)0, false, MultisigRedeemScriptType_init_zero, false, {0, {0}}}
-#define DecredTransactionType_init_zero          {{{NULL}, NULL}, false, 0, 0, {DecredTxInType_init_zero}, 0, {TxOutputBinType_init_zero}, 0, {DecredTxOutType_init_zero}, false, 0, false, 0, false, 0, false, 0, false, {0, {0}}, false, 0}
+#define DecredTransactionType_init_zero          {false, 0, 0, {DecredTxInType_init_zero}, 0, {TxOutputBinType_init_zero}, false, 0, 0, {DecredTxOutType_init_zero}, false, 0, false, 0, false, {0, {0}}, false, 0, {0, {0}}, false, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define CoinType_coin_name_tag                   1
@@ -511,17 +516,17 @@ extern const InputScriptType DecredTxInType_script_type_default;
 #define TxOutputType_script_type_tag             4
 #define TxOutputType_multisig_tag                5
 #define TxOutputType_op_return_data_tag          6
-#define DecredTransactionType_cached_hash_tag    1
-#define DecredTransactionType_version_tag        2
-#define DecredTransactionType_inputs_tag         3
-#define DecredTransactionType_bin_outputs_tag    4
+#define DecredTransactionType_version_tag        1
+#define DecredTransactionType_inputs_tag         2
+#define DecredTransactionType_bin_outputs_tag    3
+#define DecredTransactionType_lock_time_tag      4
 #define DecredTransactionType_outputs_tag        5
-#define DecredTransactionType_lock_time_tag      6
-#define DecredTransactionType_expiry_tag         7
-#define DecredTransactionType_inputs_cnt_tag     8
-#define DecredTransactionType_outputs_cnt_tag    9
-#define DecredTransactionType_extra_data_tag     10
-#define DecredTransactionType_extra_data_len_tag 11
+#define DecredTransactionType_inputs_cnt_tag     6
+#define DecredTransactionType_outputs_cnt_tag    7
+#define DecredTransactionType_extra_data_tag     8
+#define DecredTransactionType_extra_data_len_tag 9
+#define DecredTransactionType_cached_hash_tag    10
+#define DecredTransactionType_expiry_tag         11
 #define TransactionType_version_tag              1
 #define TransactionType_inputs_tag               2
 #define TransactionType_bin_outputs_tag          3
@@ -568,6 +573,7 @@ extern const pb_field_t DecredTransactionType_fields[12];
 #define DecredOutPointType_size                  48
 #define DecredTxInType_size                      5839
 #define DecredTxOutType_size                     4222
+#define DecredTransactionType_size               11706
 
 #ifdef __cplusplus
 } /* extern "C" */
